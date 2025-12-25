@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import ScrollToTop from "./components/ScrollToTop";
+
 
 // Public Components
 import Navbar from './components/Navbar';
@@ -15,6 +17,10 @@ import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
 import Contact from './pages/Contact';
 import JoinService from './pages/JoinService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import RefundPolicy from './pages/RefundPolicy';
+
 
 // Admin Components
 import AdminLayout from './admin/components/AdminLayout';
@@ -124,6 +130,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
@@ -133,6 +140,9 @@ function App() {
           <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/join" element={<PublicLayout><JoinService /></PublicLayout>} />
           <Route path="/join/:serviceId" element={<PublicLayout><JoinService /></PublicLayout>} />
+          <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
+          <Route path="/terms-of-service" element={<PublicLayout><TermsOfService /></PublicLayout>} />
+          <Route path="/refund-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
           
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
