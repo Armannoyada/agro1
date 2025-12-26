@@ -1,47 +1,71 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Card, CardContent, Typography, TextField, Button, Grid,
   FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel,
-  InputAdornment, IconButton, Divider,
+  InputAdornment, IconButton, Divider, CircularProgress,
 } from '@mui/material';
-import { ArrowBack, Save, Delete } from '@mui/icons-material';
+import { ArrowBack, Save, Delete, CloudUpload } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getService, createService, updateService, getCategories } from '../services/api';
+import { getService, createService, updateService } from '../services/api';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+
+// Static category mapping: label (display) -> value (database)
+const CATEGORIES = [
+  { label: 'Organic Farming', value: 'farming' },
+  { label: 'Dairy Farming', value: 'livestock' },
+  { label: 'Hydroponic Systems', value: 'technology' },
+];
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/Agro/agro1/backend';
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80';
 
 const ServiceForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const fileInputRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', slug: '', category_id: '', short_description: '', description: '',
-    cover_image: '', min_investment: '', max_investment: '', expected_returns: '',
-    duration_months: '', risk_level: 'medium', is_active: true, is_featured: false,
+    title: '',
+    slug: '',
+    category: '',
+    description: '',
+    image: '',
+    min_investment: '',
+    roi_min: '',
+    roi_max: '',
+    duration_months: '',
+    status: 1,
+    featured: 0,
   });
 
   useEffect(() => {
-    fetchCategories();
     if (isEdit) fetchService();
   }, [id]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await getCategories();
-      setCategories(response.data || []);
-    } catch (error) {
-      toast.error('Failed to fetch categories');
-    }
-  };
 
   const fetchService = async () => {
     try {
       const response = await getService(id);
-      if (response.data) setFormData(response.data);
+      if (response.data) {
+        setFormData({
+          title: response.data.title || '',
+          slug: response.data.slug || '',
+          category: response.data.category || '',
+          description: response.data.description || '',
+          image: response.data.image || '',
+          min_investment: response.data.min_investment || '',
+          roi_min: response.data.roi_min || '',
+          roi_max: response.data.roi_max || '',
+          duration_months: response.data.duration_months || '',
+          status: response.data.status ?? 1,
+          featured: response.data.featured ?? 0,
+        });
+      }
     } catch (error) {
       toast.error('Failed to fetch service');
       navigate('/admin/services');
@@ -50,22 +74,91 @@ const ServiceForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-    if (name === 'name') {
+    let newValue = type === 'checkbox' ? (checked ? 1 : 0) : value;
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
+
+    // Auto-generate slug from title
+    if (name === 'title') {
       const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       setFormData((prev) => ({ ...prev, slug }));
     }
   };
 
+  // Handle file upload
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Allowed: JPG, PNG, GIF, WEBP');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File too large. Max size: 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('image', file);
+
+      const response = await axios.post(`${API_URL}/upload.php`, formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      if (response.data.success) {
+        setFormData((prev) => ({ ...prev, image: response.data.url }));
+        toast.success('Image uploaded successfully');
+      } else {
+        toast.error(response.data.error || 'Upload failed');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to upload image');
+    } finally {
+      setUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate required fields
+    if (!formData.title || !formData.category || !formData.min_investment) {
+      toast.error('Please fill in all required fields: Title, Category, Min Investment');
+      return;
+    }
+
+    // Prepare payload with exact backend fields
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      min_investment: parseFloat(formData.min_investment) || 0,
+      roi_min: parseFloat(formData.roi_min) || null,
+      roi_max: parseFloat(formData.roi_max) || null,
+      duration_months: parseInt(formData.duration_months) || null,
+      image: formData.image || null,
+      featured: formData.featured ? 1 : 0,
+      status: formData.status ? 1 : 0,
+    };
+
     setLoading(true);
     try {
       if (isEdit) {
-        await updateService(id, formData);
+        await updateService(id, payload);
         toast.success('Service updated successfully');
       } else {
-        await createService(formData);
+        await createService(payload);
         toast.success('Service created successfully');
       }
       navigate('/admin/services');
@@ -75,6 +168,9 @@ const ServiceForm = () => {
       setLoading(false);
     }
   };
+
+  // Get display image (use default if none)
+  const displayImage = formData.image || DEFAULT_IMAGE;
 
   return (
     <Box>
@@ -95,35 +191,61 @@ const ServiceForm = () => {
                 <Divider sx={{ mb: 3 }} />
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Service Name" name="name" value={formData.name} onChange={handleChange} required />
+                    <TextField
+                      fullWidth
+                      label="Service Title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
+                    />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Slug" name="slug" value={formData.slug} onChange={handleChange} required helperText="URL-friendly name" />
+                    <TextField
+                      fullWidth
+                      label="Slug"
+                      name="slug"
+                      value={formData.slug}
+                      onChange={handleChange}
+                      required
+                      helperText="URL-friendly name"
+                    />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth required>
                       <InputLabel>Category</InputLabel>
-                      <Select name="category_id" value={formData.category_id} onChange={handleChange} label="Category" required>
-                        {categories.map((cat) => <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>)}
+                      <Select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        label="Category"
+                      >
+                        {CATEGORIES.map((cat) => (
+                          <MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <FormControl fullWidth>
-                      <InputLabel>Risk Level</InputLabel>
-                      <Select name="risk_level" value={formData.risk_level} onChange={handleChange} label="Risk Level">
-                        <MenuItem value="low">Low</MenuItem>
-                        <MenuItem value="medium">Medium</MenuItem>
-                        <MenuItem value="high">High</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <TextField
+                      fullWidth
+                      label="Minimum Investment"
+                      name="min_investment"
+                      type="number"
+                      value={formData.min_investment}
+                      onChange={handleChange}
+                      required
+                      InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }}
+                    />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField fullWidth label="Short Description" name="short_description" value={formData.short_description} onChange={handleChange} multiline rows={2} />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle2" gutterBottom>Full Description</Typography>
-                    <ReactQuill theme="snow" value={formData.description} onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))} style={{ height: 250, marginBottom: 50 }} />
+                    <Typography variant="subtitle2" gutterBottom>Description</Typography>
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.description}
+                      onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+                      style={{ height: 250, marginBottom: 50 }}
+                    />
                   </Grid>
                 </Grid>
               </CardContent>
@@ -135,16 +257,37 @@ const ServiceForm = () => {
                 <Divider sx={{ mb: 3 }} />
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Minimum Investment" name="min_investment" type="number" value={formData.min_investment} onChange={handleChange} InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }} />
+                    <TextField
+                      fullWidth
+                      label="ROI Min"
+                      name="roi_min"
+                      type="number"
+                      value={formData.roi_min}
+                      onChange={handleChange}
+                      InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                    />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Maximum Investment" name="max_investment" type="number" value={formData.max_investment} onChange={handleChange} InputProps={{ startAdornment: <InputAdornment position="start">₹</InputAdornment> }} />
+                    <TextField
+                      fullWidth
+                      label="ROI Max"
+                      name="roi_max"
+                      type="number"
+                      value={formData.roi_max}
+                      onChange={handleChange}
+                      InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                    />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Expected Returns" name="expected_returns" type="number" value={formData.expected_returns} onChange={handleChange} InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }} />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField fullWidth label="Duration" name="duration_months" type="number" value={formData.duration_months} onChange={handleChange} InputProps={{ endAdornment: <InputAdornment position="end">months</InputAdornment> }} />
+                    <TextField
+                      fullWidth
+                      label="Duration"
+                      name="duration_months"
+                      type="number"
+                      value={formData.duration_months}
+                      onChange={handleChange}
+                      InputProps={{ endAdornment: <InputAdornment position="end">months</InputAdornment> }}
+                    />
                   </Grid>
                 </Grid>
               </CardContent>
@@ -156,8 +299,28 @@ const ServiceForm = () => {
               <CardContent sx={{ p: 3 }}>
                 <Typography variant="h6" fontWeight={600} gutterBottom>Publish</Typography>
                 <Divider sx={{ mb: 3 }} />
-                <FormControlLabel control={<Switch name="is_active" checked={formData.is_active} onChange={handleChange} color="primary" />} label="Active" />
-                <FormControlLabel control={<Switch name="is_featured" checked={formData.is_featured} onChange={handleChange} color="primary" />} label="Featured" />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      name="status"
+                      checked={formData.status === 1}
+                      onChange={handleChange}
+                      color="primary"
+                    />
+                  }
+                  label="Active"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      name="featured"
+                      checked={formData.featured === 1}
+                      onChange={handleChange}
+                      color="primary"
+                    />
+                  }
+                  label="Featured"
+                />
                 <Box sx={{ mt: 3 }}>
                   <Button type="submit" variant="contained" startIcon={<Save />} disabled={loading} fullWidth>
                     {loading ? 'Saving...' : isEdit ? 'Update' : 'Create'}
@@ -168,14 +331,77 @@ const ServiceForm = () => {
 
             <Card sx={{ mt: 3 }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>Cover Image</Typography>
+                <Typography variant="h6" fontWeight={600} gutterBottom>Service Image</Typography>
                 <Divider sx={{ mb: 3 }} />
-                <TextField fullWidth label="Image URL" name="cover_image" value={formData.cover_image} onChange={handleChange} placeholder="https://example.com/image.jpg" sx={{ mb: 2 }} />
-                {formData.cover_image && (
-                  <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', '&:hover .delete-btn': { opacity: 1 } }}>
-                    <img src={formData.cover_image} alt="Cover" style={{ width: '100%', height: 150, objectFit: 'cover' }} />
-                    <IconButton className="delete-btn" sx={{ position: 'absolute', top: 8, right: 8, bgcolor: 'error.main', color: 'white', opacity: 0, transition: 'opacity 0.2s', '&:hover': { bgcolor: 'error.dark' } }} size="small" onClick={() => setFormData((prev) => ({ ...prev, cover_image: '' }))}><Delete fontSize="small" /></IconButton>
-                  </Box>
+
+                {/* File Upload */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={uploading ? <CircularProgress size={20} /> : <CloudUpload />}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  sx={{ mb: 2 }}
+                >
+                  {uploading ? 'Uploading...' : 'Upload Image'}
+                </Button>
+
+                {/* OR divider */}
+                <Typography variant="body2" color="text.secondary" align="center" sx={{ my: 1 }}>
+                  — OR —
+                </Typography>
+
+                {/* URL Input */}
+                <TextField
+                  fullWidth
+                  label="Image URL"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://example.com/image.jpg"
+                  sx={{ mb: 2 }}
+                  size="small"
+                />
+
+                {/* Image Preview */}
+                <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', '&:hover .delete-btn': { opacity: 1 } }}>
+                  <img
+                    src={displayImage}
+                    alt="Cover"
+                    style={{ width: '100%', height: 150, objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                  />
+                  {formData.image && (
+                    <IconButton
+                      className="delete-btn"
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        bgcolor: 'error.main',
+                        color: 'white',
+                        opacity: 0,
+                        transition: 'opacity 0.2s',
+                        '&:hover': { bgcolor: 'error.dark' }
+                      }}
+                      size="small"
+                      onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
+                {!formData.image && (
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, textAlign: 'center' }}>
+                    Using default placeholder image
+                  </Typography>
                 )}
               </CardContent>
             </Card>

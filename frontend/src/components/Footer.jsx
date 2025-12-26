@@ -13,15 +13,30 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SendIcon from '@mui/icons-material/Send';
 import toast from 'react-hot-toast';
+import { useCompany } from '../context/CompanyContext';
+import { subscribeNewsletter } from '../services/api';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { getContactInfo, getSocialLinks, loading: companyLoading } = useCompany();
 
-  const handleSubscribe = (e) => {
+  const contactInfo = getContactInfo();
+  const socialLinksData = getSocialLinks();
+
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (email) {
-      toast.success('Thank you for subscribing!');
-      setEmail('');
+      setLoading(true);
+      try {
+        await subscribeNewsletter(email);
+        toast.success('Thank you for subscribing!');
+        setEmail('');
+      } catch (error) {
+        toast.error('Subscription failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -40,14 +55,30 @@ const Footer = () => {
     { name: 'Fruit Orchards', path: '/services/fruit-orchards' },
   ];
 
-  const socialLinks = [
-    { icon: <FacebookIcon />, url: '#', label: 'Facebook' },
-    { icon: <TwitterIcon />, url: '#', label: 'Twitter' },
-    { icon: <InstagramIcon />, url: '#', label: 'Instagram' },
-    { icon: <LinkedInIcon />, url: '#', label: 'LinkedIn' },
-    { icon: <YouTubeIcon />, url: '#', label: 'YouTube' },
-    { icon: <WhatsAppIcon />, url: '#', label: 'WhatsApp' },
-  ];
+  // Map social link names to icons
+  const getSocialIcon = (name) => {
+    const icons = {
+      facebook: <FacebookIcon />,
+      twitter: <TwitterIcon />,
+      instagram: <InstagramIcon />,
+      linkedin: <LinkedInIcon />,
+      youtube: <YouTubeIcon />,
+      whatsapp: <WhatsAppIcon />,
+    };
+    return icons[name] || null;
+  };
+
+  // Build full address from contact info
+  const getFullAddress = () => {
+    if (!contactInfo) return 'Loading...';
+    const parts = [
+      contactInfo.address,
+      contactInfo.city,
+      contactInfo.state,
+      contactInfo.pincode
+    ].filter(Boolean);
+    return parts.length > 0 ? parts.join(', ') : '123 Green Valley, Agriculture Hub, Mumbai';
+  };
 
   return (
     <footer className="bg-gradient-to-b from-primary-900 to-primary-950 text-white">
@@ -62,7 +93,7 @@ const Footer = () => {
               viewport={{ once: true }}
             >
               <h3 className="text-2xl md:text-3xl font-display font-bold mb-3">
-                Stay Updated with AgroTech
+                Stay Updated with {contactInfo?.companyName || 'AgroTech'}
               </h3>
               <p className="text-primary-200 mb-6">
                 Subscribe to our newsletter for the latest updates on farming opportunities and agricultural insights.
@@ -78,9 +109,10 @@ const Footer = () => {
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-white text-primary-700 rounded-full font-medium hover:bg-primary-100 transition-colors flex items-center justify-center gap-2"
+                  disabled={loading}
+                  className="px-6 py-3 bg-white text-primary-700 rounded-full font-medium hover:bg-primary-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  Subscribe <SendIcon fontSize="small" />
+                  {loading ? 'Subscribing...' : 'Subscribe'} <SendIcon fontSize="small" />
                 </button>
               </form>
             </motion.div>
@@ -94,29 +126,54 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                <AgricultureIcon className="text-primary-400" fontSize="large" />
-              </div>
+              {contactInfo?.logo ? (
+                <img
+                  src={contactInfo.logo}
+                  alt={contactInfo.companyName || 'Logo'}
+                  className="w-12 h-12 object-contain rounded-xl"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                  <AgricultureIcon className="text-primary-400" fontSize="large" />
+                </div>
+              )}
               <div>
-                <h2 className="text-xl font-display font-bold text-white">AgroTech</h2>
-                <p className="text-xs text-primary-300 -mt-1">Solutions</p>
+                <h2 className="text-xl font-display font-bold text-white">
+                  {contactInfo?.companyName?.split(' ')[0] || 'AgroTech'}
+                </h2>
+                <p className="text-xs text-primary-300 -mt-1">
+                  {contactInfo?.companyName?.split(' ').slice(1).join(' ') || 'Solutions'}
+                </p>
               </div>
             </Link>
             <p className="text-primary-200 mb-6 leading-relaxed">
-              We are a leading agro-tech company providing innovative farming solutions and investment 
-              opportunities in agriculture. Join us in growing a sustainable future.
+              {contactInfo?.aboutShort || 'We are a leading agro-tech company providing innovative farming solutions and investment opportunities in agriculture. Join us in growing a sustainable future.'}
             </p>
             <div className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.url}
-                  aria-label={social.label}
-                  className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors"
-                >
-                  {social.icon}
-                </a>
-              ))}
+              {socialLinksData.length > 0 ? (
+                socialLinksData.map((social) => (
+                  <a
+                    key={social.name}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors"
+                  >
+                    {getSocialIcon(social.name)}
+                  </a>
+                ))
+              ) : (
+                // Fallback if no social links configured
+                <>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors">
+                    <FacebookIcon />
+                  </a>
+                  <a href="#" className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors">
+                    <InstagramIcon />
+                  </a>
+                </>
+              )}
             </div>
           </div>
 
@@ -163,19 +220,25 @@ const Footer = () => {
               <li>
                 <a href="#" className="flex items-start gap-3 text-primary-200 hover:text-white transition-colors">
                   <LocationOnIcon className="text-primary-400 mt-0.5" />
-                  <span>123 Green Valley, Agriculture Hub,<br />Mumbai, Maharashtra 400001</span>
+                  <span>{getFullAddress()}</span>
                 </a>
               </li>
               <li>
-                <a href="tel:+919876543210" className="flex items-center gap-3 text-primary-200 hover:text-white transition-colors">
+                <a
+                  href={`tel:${contactInfo?.phone || '+919876543210'}`}
+                  className="flex items-center gap-3 text-primary-200 hover:text-white transition-colors"
+                >
                   <PhoneIcon className="text-primary-400" />
-                  <span>+91 9876543210</span>
+                  <span>{contactInfo?.phone || '+91 9876543210'}</span>
                 </a>
               </li>
               <li>
-                <a href="mailto:info@agrotech.com" className="flex items-center gap-3 text-primary-200 hover:text-white transition-colors">
+                <a
+                  href={`mailto:${contactInfo?.email || 'info@agrotech.com'}`}
+                  className="flex items-center gap-3 text-primary-200 hover:text-white transition-colors"
+                >
                   <EmailIcon className="text-primary-400" />
-                  <span>info@agrotech.com</span>
+                  <span>{contactInfo?.email || 'info@agrotech.com'}</span>
                 </a>
               </li>
             </ul>
@@ -187,7 +250,7 @@ const Footer = () => {
       <div className="border-t border-primary-800">
         <div className="container-custom py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-300">
-            <p>© {new Date().getFullYear()} AgroTech Solutions. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {contactInfo?.companyName || 'AgroTech Solutions'}. All rights reserved.</p>
             <div className="flex gap-6">
               <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>

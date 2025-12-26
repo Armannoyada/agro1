@@ -4,8 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ScrollToTop from "./components/ScrollToTop";
-
-
+import { CompanyProvider } from './context/CompanyContext';
 // Public Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -127,38 +126,40 @@ const AdminRoutes = () => {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
-          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
-          <Route path="/services" element={<PublicLayout><Services /></PublicLayout>} />
-          <Route path="/services/:slug" element={<PublicLayout><ServiceDetail /></PublicLayout>} />
-          <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
-          <Route path="/join" element={<PublicLayout><JoinService /></PublicLayout>} />
-          <Route path="/join/:serviceId" element={<PublicLayout><JoinService /></PublicLayout>} />
-          <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
-          <Route path="/terms-of-service" element={<PublicLayout><TermsOfService /></PublicLayout>} />
-          <Route path="/refund-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin/*" element={<AdminRoutes />} />
-        </Routes>
-        
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: { background: '#166534', color: '#fff' },
-            success: { style: { background: '#22c55e' } },
-            error: { style: { background: '#ef4444' } },
-          }}
-        />
-      </Router>
-    </ThemeProvider>
+    <CompanyProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+            <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+            <Route path="/services" element={<PublicLayout><Services /></PublicLayout>} />
+            <Route path="/services/:slug" element={<PublicLayout><ServiceDetail /></PublicLayout>} />
+            <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/join" element={<PublicLayout><JoinService /></PublicLayout>} />
+            <Route path="/join/:serviceId" element={<PublicLayout><JoinService /></PublicLayout>} />
+            <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
+            <Route path="/terms-of-service" element={<PublicLayout><TermsOfService /></PublicLayout>} />
+            <Route path="/refund-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/*" element={<AdminRoutes />} />
+          </Routes>
+
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: { background: '#166534', color: '#fff' },
+              success: { style: { background: '#22c55e' } },
+              error: { style: { background: '#ef4444' } },
+            }}
+          />
+        </Router>
+      </ThemeProvider>
+    </CompanyProvider>
   );
 }
 

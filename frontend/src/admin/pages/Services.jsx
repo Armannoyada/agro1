@@ -42,26 +42,37 @@ const Services = () => {
   };
 
   const filteredServices = services.filter((s) =>
-    s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    s.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const columns = [
     {
-      field: 'cover_image', headerName: 'Image', width: 80,
-      renderCell: (params) => <Avatar src={params.value} variant="rounded" sx={{ width: 50, height: 50 }}>{params.row.name?.charAt(0)}</Avatar>,
+      field: 'image', headerName: 'Image', width: 80,
+      renderCell: (params) => <Avatar src={params.value} variant="rounded" sx={{ width: 50, height: 50 }}>{params.row.title?.charAt(0)}</Avatar>,
     },
-    { field: 'name', headerName: 'Service Name', flex: 1, minWidth: 200 },
+    { field: 'title', headerName: 'Service Title', flex: 1, minWidth: 200 },
     {
-      field: 'category_name', headerName: 'Category', width: 150,
+      field: 'category', headerName: 'Category', width: 150,
       renderCell: (params) => <Chip label={params.value || 'Uncategorized'} size="small" variant="outlined" />,
     },
     { field: 'min_investment', headerName: 'Min Investment', width: 130, renderCell: (params) => `₹${params.value?.toLocaleString() || 0}` },
-    { field: 'expected_returns', headerName: 'Returns', width: 100, renderCell: (params) => `${params.value || 0}%` },
+    {
+      field: 'roi_range', headerName: 'ROI', width: 100,
+      renderCell: (params) => {
+        const min = params.row.roi_min || 0;
+        const max = params.row.roi_max || 0;
+        return min === max ? `${min}%` : `${min}-${max}%`;
+      }
+    },
     { field: 'duration_months', headerName: 'Duration', width: 100, renderCell: (params) => `${params.value || 0} months` },
     {
-      field: 'is_active', headerName: 'Status', width: 100,
-      renderCell: (params) => <Chip icon={params.value ? <CheckCircle fontSize="small" /> : <Cancel fontSize="small" />} label={params.value ? 'Active' : 'Inactive'} size="small" color={params.value ? 'success' : 'default'} />,
+      field: 'status', headerName: 'Status', width: 100,
+      renderCell: (params) => <Chip icon={params.value === 1 ? <CheckCircle fontSize="small" /> : <Cancel fontSize="small" />} label={params.value === 1 ? 'Active' : 'Inactive'} size="small" color={params.value === 1 ? 'success' : 'default'} />,
+    },
+    {
+      field: 'featured', headerName: 'Featured', width: 100,
+      renderCell: (params) => params.value === 1 ? <Chip label="Featured" size="small" color="primary" /> : null,
     },
     {
       field: 'actions', headerName: 'Actions', width: 130, sortable: false,
@@ -113,7 +124,7 @@ const Services = () => {
       <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, service: null })}>
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete "{deleteDialog.service?.name}"? This action cannot be undone.</Typography>
+          <Typography>Are you sure you want to delete "{deleteDialog.service?.title}"? This action cannot be undone.</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialog({ open: false, service: null })}>Cancel</Button>

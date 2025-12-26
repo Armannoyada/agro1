@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -8,13 +8,15 @@ import SearchIcon from '@mui/icons-material/Search';
 import GrassIcon from '@mui/icons-material/Grass';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import PetsIcon from '@mui/icons-material/Pets';
-import ParkIcon from '@mui/icons-material/Park';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import { getServices } from '../services/api';
 
 const Services = () => {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = [
     { id: 'all', name: 'All Services' },
@@ -23,117 +25,57 @@ const Services = () => {
     { id: 'technology', name: 'Technology' },
   ];
 
-  const services = [
-    {
-      id: 1,
-      slug: 'organic-farming',
-      icon: <GrassIcon fontSize="large" />,
-      title: 'Organic Farming',
-      category: 'farming',
-      description: 'Invest in certified organic farming with premium returns. Chemical-free produce with high market demand ensuring healthy returns for your investment.',
-      image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80',
-      roi: '22-28%',
-      minInvestment: '₹50,000',
-      duration: '12 months',
-      featured: true,
-    },
-    {
-      id: 2,
-      slug: 'hydroponic-systems',
-      icon: <WaterDropIcon fontSize="large" />,
-      title: 'Hydroponic Systems',
-      category: 'technology',
-      description: 'Modern soil-less farming solutions for urban agriculture. High yield in minimal space with advanced nutrient management systems.',
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
-      roi: '25-32%',
-      minInvestment: '₹75,000',
-      duration: '8 months',
-      featured: true,
-    },
-    {
-      id: 3,
-      slug: 'dairy-farming',
-      icon: <PetsIcon fontSize="large" />,
-      title: 'Dairy Farming',
-      category: 'livestock',
-      description: 'Integrated dairy farming with consistent monthly returns. Premium quality milk production with modern dairy management practices.',
-      image: 'https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=600&q=80',
-      roi: '18-24%',
-      minInvestment: '₹1,00,000',
-      duration: '24 months',
-      featured: false,
-    },
-    {
-      id: 4,
-      slug: 'fruit-orchards',
-      icon: <ParkIcon fontSize="large" />,
-      title: 'Fruit Orchards',
-      category: 'farming',
-      description: 'Long-term investment in fruit orchards with high yield potential. Mangoes, apples, citrus fruits, and more exotic varieties.',
-      image: 'https://images.unsplash.com/photo-1474564862106-1f23d10b9d72?w=600&q=80',
-      roi: '20-30%',
-      minInvestment: '₹2,00,000',
-      duration: '36 months',
-      featured: true,
-    },
-    {
-      id: 5,
-      slug: 'mushroom-cultivation',
-      icon: <GrassIcon fontSize="large" />,
-      title: 'Mushroom Cultivation',
-      category: 'farming',
-      description: 'High-profit mushroom farming with quick returns. Low investment, high demand produce with multiple harvesting cycles per year.',
-      image: 'https://images.unsplash.com/photo-1504545102780-26774c1bb073?w=600&q=80',
-      roi: '35-45%',
-      minInvestment: '₹30,000',
-      duration: '6 months',
-      featured: false,
-    },
-    {
-      id: 6,
-      slug: 'contract-farming',
-      icon: <AgricultureIcon fontSize="large" />,
-      title: 'Contract Farming',
-      category: 'farming',
-      description: 'Partner with established brands for guaranteed buyback. Secure investment with assured returns and market stability.',
-      image: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&q=80',
-      roi: '15-22%',
-      minInvestment: '₹1,50,000',
-      duration: '12 months',
-      featured: false,
-    },
-    {
-      id: 7,
-      slug: 'poultry-farming',
-      icon: <PetsIcon fontSize="large" />,
-      title: 'Poultry Farming',
-      category: 'livestock',
-      description: 'Commercial poultry farming with steady income. Egg production and broiler farming with modern facilities.',
-      image: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&q=80',
-      roi: '20-28%',
-      minInvestment: '₹80,000',
-      duration: '12 months',
-      featured: false,
-    },
-    {
-      id: 8,
-      slug: 'smart-greenhouse',
-      icon: <WaterDropIcon fontSize="large" />,
-      title: 'Smart Greenhouse',
-      category: 'technology',
-      description: 'Climate-controlled greenhouse farming with IoT integration. Year-round production of high-value crops.',
-      image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80',
-      roi: '28-35%',
-      minInvestment: '₹1,50,000',
-      duration: '18 months',
-      featured: true,
-    },
-  ];
+  // Map category to icon
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'farming':
+        return <GrassIcon fontSize="large" />;
+      case 'livestock':
+        return <PetsIcon fontSize="large" />;
+      case 'technology':
+        return <WaterDropIcon fontSize="large" />;
+      default:
+        return <AgricultureIcon fontSize="large" />;
+    }
+  };
 
+  // Format ROI display
+  const formatROI = (roiMin, roiMax) => {
+    if (!roiMin && !roiMax) return 'N/A';
+    if (roiMin && roiMax && roiMin !== roiMax) return `${roiMin}-${roiMax}%`;
+    return `${roiMin || roiMax}%`;
+  };
+
+  // Format investment display
+  const formatInvestment = (amount) => {
+    if (!amount) return '₹0';
+    return `₹${Number(amount).toLocaleString('en-IN')}`;
+  };
+
+  // Fetch services from API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await getServices();
+        // Filter only active services (status === 1)
+        const activeServices = (response.data || []).filter(s => s.status === 1 || s.status === '1');
+        setServices(activeServices);
+      } catch (error) {
+        console.error('Failed to fetch services:', error);
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  // Filter services by category and search
   const filteredServices = services.filter(service => {
     const matchesFilter = filter === 'all' || service.category === filter;
-    const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          service.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      (service.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (service.description?.toLowerCase() || '').includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -142,7 +84,7 @@ const Services = () => {
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-to-br from-primary-50 via-white to-primary-100 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        
+
         <div className="container-custom relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -154,13 +96,13 @@ const Services = () => {
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               Our Services
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
               Investment <span className="gradient-text">Opportunities</span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              Choose from our diverse range of agricultural investment services. 
+              Choose from our diverse range of agricultural investment services.
               Each option is designed to maximize your returns while contributing to sustainable farming.
             </p>
           </motion.div>
@@ -190,11 +132,10 @@ const Services = () => {
                 <button
                   key={cat.id}
                   onClick={() => setFilter(cat.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                    filter === cat.id
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${filter === cat.id
                       ? 'bg-primary-500 text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   {cat.name}
                 </button>
@@ -207,7 +148,12 @@ const Services = () => {
       {/* Services Grid */}
       <section className="section-padding" ref={ref}>
         <div className="container-custom">
-          {filteredServices.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="text-4xl mb-4">⏳</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Loading services...</h3>
+            </div>
+          ) : filteredServices.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No services found</h3>
@@ -227,14 +173,14 @@ const Services = () => {
                     {/* Image */}
                     <div className="relative h-56 overflow-hidden">
                       <img
-                        src={service.image}
+                        src={service.image || 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80'}
                         alt={service.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                      
+
                       {/* Featured Badge */}
-                      {service.featured && (
+                      {(service.featured === 1 || service.featured === '1') && (
                         <div className="absolute top-4 left-4 bg-primary-500 text-white text-xs font-medium px-3 py-1 rounded-full">
                           Featured
                         </div>
@@ -247,7 +193,7 @@ const Services = () => {
 
                       {/* Icon */}
                       <div className="absolute bottom-4 right-4 w-14 h-14 bg-white rounded-xl shadow-lg flex items-center justify-center text-primary-600 group-hover:bg-primary-500 group-hover:text-white transition-colors duration-300">
-                        {service.icon}
+                        {getCategoryIcon(service.category)}
                       </div>
                     </div>
 
@@ -256,23 +202,21 @@ const Services = () => {
                       <h3 className="text-xl font-display font-semibold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors">
                         {service.title}
                       </h3>
-                      <p className="text-gray-600 mb-4 flex-grow line-clamp-3">
-                        {service.description}
-                      </p>
+                      <p className="text-gray-600 mb-4 flex-grow line-clamp-3" dangerouslySetInnerHTML={{ __html: service.description || '' }} />
 
                       {/* Stats */}
                       <div className="grid grid-cols-3 gap-4 py-4 border-t border-gray-100 mb-4">
                         <div className="text-center">
                           <p className="text-xs text-gray-500 uppercase">ROI</p>
-                          <p className="font-bold text-primary-600">{service.roi}</p>
+                          <p className="font-bold text-primary-600">{formatROI(service.roi_min, service.roi_max)}</p>
                         </div>
                         <div className="text-center border-x border-gray-100">
                           <p className="text-xs text-gray-500 uppercase">Min. Invest</p>
-                          <p className="font-bold text-gray-900 text-sm">{service.minInvestment}</p>
+                          <p className="font-bold text-gray-900 text-sm">{formatInvestment(service.min_investment)}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500 uppercase">Duration</p>
-                          <p className="font-bold text-gray-900 text-sm">{service.duration}</p>
+                          <p className="font-bold text-gray-900 text-sm">{service.duration_months ? `${service.duration_months} months` : 'N/A'}</p>
                         </div>
                       </div>
 

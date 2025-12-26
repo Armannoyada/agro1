@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/agrotech-api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/Agro/agro1/backend';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -157,8 +157,18 @@ export const getStatistics = async () => {
   return response.data;
 };
 
+export const createStatistic = async (data) => {
+  const response = await api.post('/statistics.php', data);
+  return response.data;
+};
+
 export const updateStatistic = async (id, data) => {
   const response = await api.put('/statistics.php', { id, ...data });
+  return response.data;
+};
+
+export const deleteStatistic = async (id) => {
+  const response = await api.delete('/statistics.php', { data: { id } });
   return response.data;
 };
 

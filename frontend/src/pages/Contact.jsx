@@ -8,6 +8,8 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SendIcon from '@mui/icons-material/Send';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import toast from 'react-hot-toast';
+import { useCompany } from '../context/CompanyContext';
+import { submitContactForm } from '../services/api';
 
 const Contact = () => {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
@@ -20,6 +22,9 @@ const Contact = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  const { getContactInfo } = useCompany();
+  const contactInfo = getContactInfo();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -27,44 +32,70 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      await submitContactForm(formData);
       toast.success('Message sent successfully! We will get back to you soon.');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (error) {
+      toast.error('Failed to send message. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
-  const contactInfo = [
+  // Build full address
+  const getFullAddress = () => {
+    if (!contactInfo) return ['123 Green Valley, Agriculture Hub', 'Mumbai, Maharashtra 400001'];
+    const line1 = contactInfo.address || '123 Green Valley, Agriculture Hub';
+    const line2 = [contactInfo.city, contactInfo.state, contactInfo.pincode].filter(Boolean).join(', ') || 'Mumbai, Maharashtra 400001';
+    return [line1, line2];
+  };
+
+  const addressLines = getFullAddress();
+
+  const contactInfoCards = [
     {
       icon: <LocationOnIcon fontSize="large" />,
       title: 'Visit Us',
-      details: ['123 Green Valley, Agriculture Hub', 'Mumbai, Maharashtra 400001'],
+      details: addressLines,
     },
     {
       icon: <PhoneIcon fontSize="large" />,
       title: 'Call Us',
-      details: ['+91 9876543210', '+91 9876543211'],
+      details: [
+        contactInfo?.phone || '+91 9876543210',
+        contactInfo?.alternatePhone || ''
+      ].filter(Boolean),
     },
     {
       icon: <EmailIcon fontSize="large" />,
       title: 'Email Us',
-      details: ['info@agrotech.com', 'support@agrotech.com'],
+      details: [
+        contactInfo?.email || 'info@agrotech.com',
+        contactInfo?.supportEmail || ''
+      ].filter(Boolean),
     },
     {
       icon: <AccessTimeIcon fontSize="large" />,
       title: 'Working Hours',
-      details: ['Mon - Sat: 9:00 AM - 6:00 PM', 'Sunday: Closed'],
+      details: [
+        contactInfo?.workingHours || 'Mon - Sat: 9:00 AM - 6:00 PM',
+        'Sunday: Closed'
+      ],
     },
   ];
+
+  // WhatsApp link
+  const whatsappNumber = contactInfo?.whatsapp?.replace(/\D/g, '') || '919876543210';
+  const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
   return (
     <div className="bg-white">
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-to-br from-primary-50 via-white to-primary-100 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        
+
         <div className="container-custom relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -76,13 +107,13 @@ const Contact = () => {
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               Contact Us
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
               Get in <span className="gradient-text">Touch</span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              Have questions about our services or want to start investing? 
+              Have questions about our services or want to start investing?
               We'd love to hear from you. Reach out to us and we'll respond as soon as we can.
             </p>
           </motion.div>
@@ -93,7 +124,7 @@ const Contact = () => {
       <section className="py-12 bg-white">
         <div className="container-custom">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {contactInfo.map((info, index) => (
+            {contactInfoCards.map((info, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -241,16 +272,20 @@ const Contact = () => {
             >
               {/* Map */}
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-80">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74109995709657!3d19.08219783958221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1703423456789!5m2!1sen!2sin"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Location Map"
-                />
+                {contactInfo?.mapEmbed ? (
+                  <div dangerouslySetInnerHTML={{ __html: contactInfo.mapEmbed }} className="w-full h-full" />
+                ) : (
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74109995709657!3d19.08219783958221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1703423456789!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Location Map"
+                  />
+                )}
               </div>
 
               {/* Quick Contact Card */}
@@ -262,7 +297,7 @@ const Contact = () => {
                   Connect with us directly on WhatsApp for instant support and quick responses to your queries.
                 </p>
                 <a
-                  href="https://wa.me/919876543210"
+                  href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-white text-primary-700 px-6 py-3 rounded-full font-semibold hover:bg-primary-50 transition-colors"
