@@ -8,16 +8,9 @@ import {
 import { ArrowBack, Save, Delete, CloudUpload } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { getService, createService, updateService } from '../services/api';
+import { getService, createService, updateService, getCategories } from '../services/api';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-
-// Static category mapping: label (display) -> value (database)
-const CATEGORIES = [
-  { label: 'Organic Farming', value: 'farming' },
-  { label: 'Dairy Farming', value: 'livestock' },
-  { label: 'Hydroponic Systems', value: 'technology' },
-];
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/Agro/agro1/backend';
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80';
@@ -26,16 +19,22 @@ const ServiceForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
-  const fileInputRef = useRef(null);
+  const thumbnailInputRef = useRef(null);
+  const headerInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState({ thumbnail: false, header: false, gallery: false });
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     category: '',
     description: '',
-    image: '',
+    thumbnail_image: '',
+    header_image: '',
+    gallery_images: [],
     min_investment: '',
     roi_min: '',
     roi_max: '',
@@ -43,6 +42,22 @@ const ServiceForm = () => {
     status: 1,
     featured: 0,
   });
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(response.data || []);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        toast.error('Failed to load categories');
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (isEdit) fetchService();
@@ -57,7 +72,9 @@ const ServiceForm = () => {
           slug: response.data.slug || '',
           category: response.data.category || '',
           description: response.data.description || '',
-          image: response.data.image || '',
+          thumbnail_image: response.data.thumbnail_image || '',
+          header_image: response.data.header_image || '',
+          gallery_images: response.data.gallery_images || [],
           min_investment: response.data.min_investment || '',
           roi_min: response.data.roi_min || '',
           roi_max: response.data.roi_max || '',
@@ -85,8 +102,8 @@ const ServiceForm = () => {
     }
   };
 
-  // Handle file upload
-  const handleFileUpload = async (e) => {
+  // Handle file upload for specific image type
+  const handleFileUpload = async (e, imageType) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -103,7 +120,7 @@ const ServiceForm = () => {
       return;
     }
 
-    setUploading(true);
+    setUploading((prev) => ({ ...prev, [imageType]: true }));
     try {
       const formDataUpload = new FormData();
       formDataUpload.append('image', file);
@@ -113,7 +130,14 @@ const ServiceForm = () => {
       });
 
       if (response.data.success) {
-        setFormData((prev) => ({ ...prev, image: response.data.url }));
+        if (imageType === 'gallery') {
+          setFormData((prev) => ({
+            ...prev,
+            gallery_images: [...prev.gallery_images, response.data.url],
+          }));
+        } else {
+          setFormData((prev) => ({ ...prev, [imageType]: response.data.url }));
+        }
         toast.success('Image uploaded successfully');
       } else {
         toast.error(response.data.error || 'Upload failed');
@@ -121,12 +145,23 @@ const ServiceForm = () => {
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to upload image');
     } finally {
-      setUploading(false);
+      setUploading((prev) => ({ ...prev, [imageType]: false }));
       // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+      const inputRef = imageType === 'thumbnail_image' ? thumbnailInputRef
+        : imageType === 'header_image' ? headerInputRef
+          : galleryInputRef;
+      if (inputRef.current) {
+        inputRef.current.value = '';
       }
     }
+  };
+
+  // Remove gallery image
+  const removeGalleryImage = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery_images: prev.gallery_images.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -147,7 +182,9 @@ const ServiceForm = () => {
       roi_min: parseFloat(formData.roi_min) || null,
       roi_max: parseFloat(formData.roi_max) || null,
       duration_months: parseInt(formData.duration_months) || null,
-      image: formData.image || null,
+      thumbnail_image: formData.thumbnail_image || null,
+      header_image: formData.header_image || null,
+      gallery_images: formData.gallery_images || [],
       featured: formData.featured ? 1 : 0,
       status: formData.status ? 1 : 0,
     };
@@ -168,9 +205,6 @@ const ServiceForm = () => {
       setLoading(false);
     }
   };
-
-  // Get display image (use default if none)
-  const displayImage = formData.image || DEFAULT_IMAGE;
 
   return (
     <Box>
@@ -219,10 +253,17 @@ const ServiceForm = () => {
                         value={formData.category}
                         onChange={handleChange}
                         label="Category"
+                        disabled={categoriesLoading}
                       >
-                        {CATEGORIES.map((cat) => (
-                          <MenuItem key={cat.value} value={cat.value}>{cat.label}</MenuItem>
-                        ))}
+                        {categoriesLoading ? (
+                          <MenuItem value="" disabled>Loading categories...</MenuItem>
+                        ) : categories.length === 0 ? (
+                          <MenuItem value="" disabled>No categories available</MenuItem>
+                        ) : (
+                          categories.map((cat) => (
+                            <MenuItem key={cat.id} value={cat.slug}>{cat.name}</MenuItem>
+                          ))
+                        )}
                       </Select>
                     </FormControl>
                   </Grid>
@@ -329,78 +370,156 @@ const ServiceForm = () => {
               </CardContent>
             </Card>
 
+            {/* Thumbnail Image Card */}
             <Card sx={{ mt: 3 }}>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>Service Image</Typography>
-                <Divider sx={{ mb: 3 }} />
+                <Typography variant="h6" fontWeight={600} gutterBottom>Thumbnail Image</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                  Used on Home page and Services listing
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
 
-                {/* File Upload */}
                 <input
                   type="file"
-                  ref={fileInputRef}
+                  ref={thumbnailInputRef}
                   accept="image/jpeg,image/png,image/gif,image/webp"
-                  onChange={handleFileUpload}
+                  onChange={(e) => handleFileUpload(e, 'thumbnail_image')}
                   style={{ display: 'none' }}
                 />
                 <Button
                   variant="outlined"
                   fullWidth
-                  startIcon={uploading ? <CircularProgress size={20} /> : <CloudUpload />}
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  sx={{ mb: 2 }}
-                >
-                  {uploading ? 'Uploading...' : 'Upload Image'}
-                </Button>
-
-                {/* OR divider */}
-                <Typography variant="body2" color="text.secondary" align="center" sx={{ my: 1 }}>
-                  — OR —
-                </Typography>
-
-                {/* URL Input */}
-                <TextField
-                  fullWidth
-                  label="Image URL"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://example.com/image.jpg"
+                  startIcon={uploading.thumbnail ? <CircularProgress size={20} /> : <CloudUpload />}
+                  onClick={() => thumbnailInputRef.current?.click()}
+                  disabled={uploading.thumbnail}
                   sx={{ mb: 2 }}
                   size="small"
-                />
+                >
+                  {uploading.thumbnail ? 'Uploading...' : 'Upload Thumbnail'}
+                </Button>
 
-                {/* Image Preview */}
                 <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', '&:hover .delete-btn': { opacity: 1 } }}>
                   <img
-                    src={displayImage}
-                    alt="Cover"
-                    style={{ width: '100%', height: 150, objectFit: 'cover' }}
+                    src={formData.thumbnail_image || DEFAULT_IMAGE}
+                    alt="Thumbnail"
+                    style={{ width: '100%', height: 120, objectFit: 'cover' }}
                     onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                   />
-                  {formData.image && (
+                  {formData.thumbnail_image && (
                     <IconButton
                       className="delete-btn"
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        bgcolor: 'error.main',
-                        color: 'white',
-                        opacity: 0,
-                        transition: 'opacity 0.2s',
-                        '&:hover': { bgcolor: 'error.dark' }
-                      }}
+                      sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', opacity: 0, transition: 'opacity 0.2s', '&:hover': { bgcolor: 'error.dark' } }}
                       size="small"
-                      onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+                      onClick={() => setFormData((prev) => ({ ...prev, thumbnail_image: '' }))}
                     >
                       <Delete fontSize="small" />
                     </IconButton>
                   )}
                 </Box>
-                {!formData.image && (
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, textAlign: 'center' }}>
-                    Using default placeholder image
+              </CardContent>
+            </Card>
+
+            {/* Header Image Card */}
+            <Card sx={{ mt: 3 }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant="h6" fontWeight={600} gutterBottom>Header Image</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                  Used on Service Detail page hero
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <input
+                  type="file"
+                  ref={headerInputRef}
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={(e) => handleFileUpload(e, 'header_image')}
+                  style={{ display: 'none' }}
+                />
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={uploading.header ? <CircularProgress size={20} /> : <CloudUpload />}
+                  onClick={() => headerInputRef.current?.click()}
+                  disabled={uploading.header}
+                  sx={{ mb: 2 }}
+                  size="small"
+                >
+                  {uploading.header ? 'Uploading...' : 'Upload Header'}
+                </Button>
+
+                <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', '&:hover .delete-btn': { opacity: 1 } }}>
+                  <img
+                    src={formData.header_image || DEFAULT_IMAGE}
+                    alt="Header"
+                    style={{ width: '100%', height: 120, objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                  />
+                  {formData.header_image && (
+                    <IconButton
+                      className="delete-btn"
+                      sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'error.main', color: 'white', opacity: 0, transition: 'opacity 0.2s', '&:hover': { bgcolor: 'error.dark' } }}
+                      size="small"
+                      onClick={() => setFormData((prev) => ({ ...prev, header_image: '' }))}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+
+            {/* Gallery Images Card */}
+            <Card sx={{ mt: 3 }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant="h6" fontWeight={600} gutterBottom>Gallery Images</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                  Additional images for service detail gallery
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <input
+                  type="file"
+                  ref={galleryInputRef}
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={(e) => handleFileUpload(e, 'gallery')}
+                  style={{ display: 'none' }}
+                />
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={uploading.gallery ? <CircularProgress size={20} /> : <CloudUpload />}
+                  onClick={() => galleryInputRef.current?.click()}
+                  disabled={uploading.gallery}
+                  sx={{ mb: 2 }}
+                  size="small"
+                >
+                  {uploading.gallery ? 'Uploading...' : 'Add Gallery Image'}
+                </Button>
+
+                {formData.gallery_images.length > 0 ? (
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1 }}>
+                    {formData.gallery_images.map((img, index) => (
+                      <Box key={index} sx={{ position: 'relative', borderRadius: 1, overflow: 'hidden', '&:hover .delete-btn': { opacity: 1 } }}>
+                        <img
+                          src={img}
+                          alt={`Gallery ${index + 1}`}
+                          style={{ width: '100%', height: 60, objectFit: 'cover' }}
+                          onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                        />
+                        <IconButton
+                          className="delete-btn"
+                          sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'error.main', color: 'white', opacity: 0, transition: 'opacity 0.2s', '&:hover': { bgcolor: 'error.dark' }, p: 0.5 }}
+                          size="small"
+                          onClick={() => removeGalleryImage(index)}
+                        >
+                          <Delete sx={{ fontSize: 14 }} />
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body2" color="text.secondary" align="center">
+                    No gallery images added yet
                   </Typography>
                 )}
               </CardContent>

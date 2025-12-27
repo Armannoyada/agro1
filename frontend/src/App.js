@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import ScrollToTop from "./components/ScrollToTop";
+import BackToTop from './components/common/BackToTop';
 import { CompanyProvider } from './context/CompanyContext';
 // Public Components
 import Navbar from './components/Navbar';
@@ -19,6 +20,8 @@ import JoinService from './pages/JoinService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import RefundPolicy from './pages/RefundPolicy';
+import BlogList from './pages/BlogList';
+import BlogDetail from './pages/BlogDetail';
 
 
 // Admin Components
@@ -33,6 +36,8 @@ import Contacts from './admin/pages/Contacts';
 import Testimonials from './admin/pages/Testimonials';
 import Team from './admin/pages/Team';
 import Settings from './admin/pages/Settings';
+import Blogs from './admin/pages/Blogs';
+import BlogForm from './admin/pages/BlogForm';
 
 // MUI Theme for Admin
 const theme = createTheme({
@@ -115,6 +120,9 @@ const AdminRoutes = () => {
         <Route path="categories" element={<Categories />} />
         <Route path="inquiries" element={<Inquiries />} />
         <Route path="contacts" element={<Contacts />} />
+        <Route path="blogs" element={<Blogs />} />
+        <Route path="blogs/create" element={<BlogForm />} />
+        <Route path="blogs/edit/:id" element={<BlogForm />} />
         <Route path="testimonials" element={<Testimonials />} />
         <Route path="team" element={<Team />} />
         <Route path="settings" element={<Settings />} />
@@ -131,6 +139,7 @@ function App() {
         <CssBaseline />
         <Router>
           <ScrollToTop />
+          <BackToTop />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
@@ -140,6 +149,8 @@ function App() {
             <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
             <Route path="/join" element={<PublicLayout><JoinService /></PublicLayout>} />
             <Route path="/join/:serviceId" element={<PublicLayout><JoinService /></PublicLayout>} />
+            <Route path="/blog" element={<PublicLayout><BlogList /></PublicLayout>} />
+            <Route path="/blog/:slug" element={<PublicLayout><BlogDetail /></PublicLayout>} />
             <Route path="/privacy-policy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
             <Route path="/terms-of-service" element={<PublicLayout><TermsOfService /></PublicLayout>} />
             <Route path="/refund-policy" element={<PublicLayout><RefundPolicy /></PublicLayout>} />

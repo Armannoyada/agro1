@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+import ArticleIcon from '@mui/icons-material/Article';
 
 const drawerWidth = 260;
 
@@ -24,6 +25,7 @@ const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
   { text: 'Services', icon: <MiscellaneousServicesIcon />, path: '/admin/services' },
   { text: 'Categories', icon: <CategoryIcon />, path: '/admin/categories' },
+  { text: 'Blogs', icon: <ArticleIcon />, path: '/admin/blogs' },
   { text: 'Inquiries', icon: <QuestionAnswerIcon />, path: '/admin/inquiries' },
   { text: 'Contacts', icon: <ContactMailIcon />, path: '/admin/contacts' },
   { text: 'Testimonials', icon: <FormatQuoteIcon />, path: '/admin/testimonials' },
@@ -61,10 +63,10 @@ const AdminLayout = ({ user, onLogout }) => {
     <Box>
       {/* Logo */}
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Box sx={{ 
-          width: 40, height: 40, borderRadius: 2, 
-          bgcolor: 'primary.main', display: 'flex', 
-          alignItems: 'center', justifyContent: 'center' 
+        <Box sx={{
+          width: 40, height: 40, borderRadius: 2,
+          bgcolor: 'primary.main', display: 'flex',
+          alignItems: 'center', justifyContent: 'center'
         }}>
           <AgricultureIcon sx={{ color: 'white' }} />
         </Box>
@@ -77,9 +79,9 @@ const AdminLayout = ({ user, onLogout }) => {
           </Typography>
         </Box>
       </Box>
-      
+
       <Divider />
-      
+
       {/* Menu Items */}
       <List sx={{ px: 1, py: 2 }}>
         {menuItems.map((item) => (
@@ -87,7 +89,7 @@ const AdminLayout = ({ user, onLogout }) => {
             <ListItemButton
               component={Link}
               to={item.path}
-              selected={location.pathname === item.path || 
+              selected={location.pathname === item.path ||
                 (item.path !== '/admin' && location.pathname.startsWith(item.path))}
               onClick={() => isMobile && setMobileOpen(false)}
               sx={{
@@ -111,9 +113,9 @@ const AdminLayout = ({ user, onLogout }) => {
             </ListItemButton>
           </ListItem>
         ))}
-        
+
         <Divider sx={{ my: 2 }} />
-        
+
         {/* Back to Website */}
         <ListItem disablePadding>
           <ListItemButton
@@ -158,9 +160,9 @@ const AdminLayout = ({ user, onLogout }) => {
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Box sx={{ flexGrow: 1 }} />
-          
+
           {/* User Menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -172,7 +174,7 @@ const AdminLayout = ({ user, onLogout }) => {
               </Avatar>
             </IconButton>
           </Box>
-          
+
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -211,7 +213,7 @@ const AdminLayout = ({ user, onLogout }) => {
         >
           {drawer}
         </Drawer>
-        
+
         {/* Desktop Drawer */}
         <Drawer
           variant="permanent"

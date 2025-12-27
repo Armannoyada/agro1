@@ -21,7 +21,7 @@ const AboutPreview = () => {
   ];
 
   return (
-    <section className="section-padding bg-gradient-to-b from-white to-primary-50" ref={ref}>
+    <section className="pt-8 md:pt-12 pb-16 md:pb-24 px-4 md:px-8 bg-gradient-to-b from-white to-primary-50" ref={ref}>
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Image Section */}
@@ -50,7 +50,7 @@ const AboutPreview = () => {
               >
                 <div className="text-center">
                   <div className="text-4xl font-display font-bold text-primary-600 mb-1">15+</div>
-                  <p className="text-gray-600 font-medium">Years of<br/>Excellence</p>
+                  <p className="text-gray-600 font-medium">Years of<br />Excellence</p>
                 </div>
               </motion.div>
 
@@ -92,15 +92,15 @@ const AboutPreview = () => {
             </h2>
 
             <p className="text-gray-600 leading-relaxed mb-6">
-              AgroTech Solutions is a leading agricultural technology company dedicated to 
-              revolutionizing farming through innovative solutions. We bridge the gap between 
-              investors and sustainable agriculture, creating opportunities for growth while 
+              AgroTech Solutions is a leading agricultural technology company dedicated to
+              revolutionizing farming through innovative solutions. We bridge the gap between
+              investors and sustainable agriculture, creating opportunities for growth while
               nurturing the earth.
             </p>
 
             <p className="text-gray-600 leading-relaxed mb-8">
-              With over 15 years of experience, we've cultivated thousands of acres and 
-              generated substantial returns for our investors while maintaining the highest 
+              With over 15 years of experience, we've cultivated thousands of acres and
+              generated substantial returns for our investors while maintaining the highest
               standards of organic and sustainable farming practices.
             </p>
 

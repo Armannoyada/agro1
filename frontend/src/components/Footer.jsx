@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
@@ -14,15 +14,32 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SendIcon from '@mui/icons-material/Send';
 import toast from 'react-hot-toast';
 import { useCompany } from '../context/CompanyContext';
-import { subscribeNewsletter } from '../services/api';
+import { subscribeNewsletter, getCategories } from '../services/api';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const { getContactInfo, getSocialLinks, loading: companyLoading } = useCompany();
 
   const contactInfo = getContactInfo();
   const socialLinksData = getSocialLinks();
+
+  // Fetch categories from admin panel
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        if (response.success && response.data) {
+          // Show categories from admin (limit to 5)
+          setCategories(response.data.slice(0, 5));
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -43,16 +60,9 @@ const Footer = () => {
   const quickLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
-    { name: 'Our Services', path: '/services' },
+    { name: 'Blog', path: '/blog' },
     { name: 'Contact Us', path: '/contact' },
     { name: 'Join Service', path: '/join' },
-  ];
-
-  const services = [
-    { name: 'Organic Farming', path: '/services/organic-farming' },
-    { name: 'Hydroponic Systems', path: '/services/hydroponic-systems' },
-    { name: 'Dairy Farming', path: '/services/dairy-farming' },
-    { name: 'Fruit Orchards', path: '/services/fruit-orchards' },
   ];
 
   // Map social link names to icons
@@ -195,21 +205,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Services - Dynamic Categories from Admin */}
           <div>
             <h4 className="text-lg font-display font-semibold mb-6 text-white">Our Services</h4>
             <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service.path}>
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <li key={category.id}>
+                    <Link
+                      to={`/services?category=${category.slug}`}
+                      className="text-primary-200 hover:text-white transition-colors flex items-center gap-2 group"
+                    >
+                      <span className="w-1.5 h-1.5 bg-primary-500 rounded-full group-hover:bg-white transition-colors"></span>
+                      {category.name}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li>
                   <Link
-                    to={service.path}
+                    to="/services"
                     className="text-primary-200 hover:text-white transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 bg-primary-500 rounded-full group-hover:bg-white transition-colors"></span>
-                    {service.name}
+                    View All Services
                   </Link>
                 </li>
-              ))}
+              )}
             </ul>
           </div>
 

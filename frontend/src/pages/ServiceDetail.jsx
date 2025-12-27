@@ -14,7 +14,9 @@ import PetsIcon from '@mui/icons-material/Pets';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import CloseIcon from '@mui/icons-material/Close';
+import CollectionsIcon from '@mui/icons-material/Collections';
 import { getServiceBySlug, submitServiceInquiry } from '../services/api';
+import GalleryModal from '../components/GalleryModal';
 import toast from 'react-hot-toast';
 
 const ServiceDetail = () => {
@@ -26,6 +28,8 @@ const ServiceDetail = () => {
 
   // Modal state
   const [showInvestModal, setShowInvestModal] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [formLoading, setFormLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -375,7 +379,7 @@ const ServiceDetail = () => {
       {/* Hero Cover Section */}
       <section className="relative h-[60vh] min-h-[500px] overflow-hidden">
         <img
-          src={service.image || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80'}
+          src={service.header_image || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80'}
           alt={service.title}
           className="w-full h-full object-cover"
         />
@@ -484,6 +488,75 @@ const ServiceDetail = () => {
                   dangerouslySetInnerHTML={{ __html: service.description || '<p>Detailed information about this investment opportunity will be available soon.</p>' }}
                 />
               </motion.div>
+
+              {/* Gallery Section */}
+              {service.gallery_images && service.gallery_images.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="mb-12"
+                >
+                  <h2 className="text-2xl font-display font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <CollectionsIcon className="text-primary-500" />
+                    Gallery
+                  </h2>
+
+                  {/* 2-column grid with larger images */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {service.gallery_images.slice(0, 4).map((img, index) => {
+                      const isLastVisible = index === 3;
+                      const hasMoreImages = service.gallery_images.length > 4;
+                      const remainingCount = service.gallery_images.length - 4;
+
+                      return (
+                        <div
+                          key={index}
+                          className="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group shadow-md hover:shadow-xl transition-shadow duration-300"
+                          onClick={() => {
+                            setGalleryInitialIndex(index);
+                            setShowGalleryModal(true);
+                          }}
+                        >
+                          <img
+                            src={img}
+                            alt={`Gallery ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+
+                          {/* Hover overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+
+                          {/* "+N" overlay on last visible image when more exist */}
+                          {isLastVisible && hasMoreImages && (
+                            <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/80 flex items-center justify-center">
+                              <div className="text-center">
+                                <span className="text-white text-4xl md:text-5xl font-bold block">
+                                  +{remainingCount}
+                                </span>
+                                <span className="text-white/80 text-sm mt-1">more images</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* View All Images Link */}
+                  <button
+                    onClick={() => {
+                      setGalleryInitialIndex(0);
+                      setShowGalleryModal(true);
+                    }}
+                    className="mt-5 inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors group"
+                  >
+                    <CollectionsIcon fontSize="small" className="group-hover:scale-110 transition-transform" />
+                    View All {service.gallery_images.length} Images
+                    <ArrowForwardIcon fontSize="small" className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </motion.div>
+              )}
 
               {/* Features & Benefits */}
               <motion.div
@@ -613,6 +686,14 @@ const ServiceDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        images={service.gallery_images || []}
+        isOpen={showGalleryModal}
+        onClose={() => setShowGalleryModal(false)}
+        initialIndex={galleryInitialIndex}
+      />
     </div>
   );
 };

@@ -70,12 +70,17 @@ function getAllServices($conn)
     $stmt = $conn->query("
         SELECT id, title, slug, description, category, roi_min, roi_max, 
                min_investment, max_investment, duration_months, 
-               image, featured, status, created_at
+               thumbnail_image, header_image, gallery_images, featured, status, created_at
         FROM services 
         WHERE status = 1 
         ORDER BY featured DESC, created_at DESC
     ");
     $services = $stmt->fetchAll();
+
+    // Parse gallery_images JSON for each service
+    foreach ($services as &$service) {
+        $service['gallery_images'] = $service['gallery_images'] ? json_decode($service['gallery_images'], true) : [];
+    }
 
     sendResponse(['success' => true, 'data' => $services]);
 }
@@ -88,7 +93,7 @@ function getServiceBySlug($conn, $slug)
     $stmt = $conn->prepare("
         SELECT id, title, slug, description, category, roi_min, roi_max, 
                min_investment, max_investment, duration_months, 
-               image, featured, status, created_at
+               thumbnail_image, header_image, gallery_images, featured, status, created_at
         FROM services 
         WHERE slug = ? AND status = 1
     ");
@@ -96,6 +101,7 @@ function getServiceBySlug($conn, $slug)
     $service = $stmt->fetch();
 
     if ($service) {
+        $service['gallery_images'] = $service['gallery_images'] ? json_decode($service['gallery_images'], true) : [];
         sendResponse(['success' => true, 'data' => $service]);
     } else {
         sendError('Service not found', 404);
@@ -110,7 +116,7 @@ function getServiceById($conn, $id)
     $stmt = $conn->prepare("
         SELECT id, title, slug, description, category, roi_min, roi_max, 
                min_investment, max_investment, duration_months, 
-               image, featured, status, created_at
+               thumbnail_image, header_image, gallery_images, featured, status, created_at
         FROM services 
         WHERE id = ?
     ");
@@ -118,6 +124,7 @@ function getServiceById($conn, $id)
     $service = $stmt->fetch();
 
     if ($service) {
+        $service['gallery_images'] = $service['gallery_images'] ? json_decode($service['gallery_images'], true) : [];
         sendResponse(['success' => true, 'data' => $service]);
     } else {
         sendError('Service not found', 404);
@@ -132,12 +139,16 @@ function getFeaturedServices($conn)
     $stmt = $conn->query("
         SELECT id, title, slug, description, category, roi_min, roi_max, 
                min_investment, max_investment, duration_months, 
-               image, featured, status, created_at
+               thumbnail_image, header_image, gallery_images, featured, status, created_at
         FROM services 
         WHERE featured = 1 AND status = 1 
         ORDER BY created_at DESC
     ");
     $services = $stmt->fetchAll();
+
+    foreach ($services as &$service) {
+        $service['gallery_images'] = $service['gallery_images'] ? json_decode($service['gallery_images'], true) : [];
+    }
 
     sendResponse(['success' => true, 'data' => $services]);
 }
@@ -150,13 +161,17 @@ function getServicesByCategory($conn, $category)
     $stmt = $conn->prepare("
         SELECT id, title, slug, description, category, roi_min, roi_max, 
                min_investment, max_investment, duration_months, 
-               image, featured, status, created_at
+               thumbnail_image, header_image, gallery_images, featured, status, created_at
         FROM services 
         WHERE category = ? AND status = 1 
         ORDER BY created_at DESC
     ");
     $stmt->execute([$category]);
     $services = $stmt->fetchAll();
+
+    foreach ($services as &$service) {
+        $service['gallery_images'] = $service['gallery_images'] ? json_decode($service['gallery_images'], true) : [];
+    }
 
     sendResponse(['success' => true, 'data' => $services]);
 }
@@ -170,61 +185,84 @@ function getServicesByCategory($conn, $category)
  */
 function createService($conn)
 {
-    $data = getRequestBody();
+    try {
+        $data = getRequestBody();
 
-    // Validate required fields
-    $required = ['title', 'category', 'min_investment'];
-    if (!validateRequired($data, $required)) {
-        sendError('Missing required fields: title, category, min_investment');
+        // Validate required fields
+        $required = ['title', 'category', 'min_investment'];
+        if (!validateRequired($data, $required)) {
+            sendError('Missing required fields: title, category, min_investment');
+        }
+
+        // Validate min_investment is numeric
+        if (!is_numeric($data['min_investment']) || $data['min_investment'] < 0) {
+            sendError('min_investment must be a positive number');
+        }
+
+        // Generate slug from title if not provided
+        $slug = isset($data['slug']) && !empty($data['slug'])
+            ? generateSlug($data['slug'])
+            : generateSlug($data['title']);
+
+        // Check if slug already exists and make it unique
+        $stmt = $conn->prepare("SELECT id FROM services WHERE slug = ?");
+        $stmt->execute([$slug]);
+        if ($stmt->fetch()) {
+            $slug .= '-' . time();
+        }
+
+        // Prepare INSERT statement with columns that exist in the table
+        $stmt = $conn->prepare("
+            INSERT INTO services (
+                title, slug, description, category, roi_min, roi_max,
+                min_investment, max_investment, duration_months, 
+                thumbnail_image, header_image, gallery_images, featured, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+
+        // Encode gallery_images as JSON if it's an array
+        $galleryImages = isset($data['gallery_images']) && is_array($data['gallery_images'])
+            ? json_encode($data['gallery_images'])
+            : null;
+
+        $result = $stmt->execute([
+            $data['title'],
+            $slug,
+            $data['description'] ?? null,
+            $data['category'],
+            $data['roi_min'] ?? null,
+            $data['roi_max'] ?? null,
+            $data['min_investment'],
+            $data['max_investment'] ?? null,
+            $data['duration_months'] ?? null,
+            $data['thumbnail_image'] ?? null,
+            $data['header_image'] ?? null,
+            $galleryImages,
+            $data['featured'] ?? 0,
+            $data['status'] ?? 1
+        ]);
+
+        if (!$result) {
+            sendError('Failed to insert service into database');
+        }
+
+        $insertedId = $conn->lastInsertId();
+
+        if (!$insertedId) {
+            sendError('Service was not created properly - no ID returned');
+        }
+
+        sendResponse([
+            'success' => true,
+            'message' => 'Service created successfully',
+            'id' => $insertedId,
+            'slug' => $slug
+        ], 201);
+    } catch (PDOException $e) {
+        sendError('Database error: ' . $e->getMessage(), 500);
+    } catch (Exception $e) {
+        sendError('Error creating service: ' . $e->getMessage(), 500);
     }
-
-    // Validate min_investment is numeric
-    if (!is_numeric($data['min_investment']) || $data['min_investment'] < 0) {
-        sendError('min_investment must be a positive number');
-    }
-
-    // Generate slug from title if not provided
-    $slug = isset($data['slug']) && !empty($data['slug'])
-        ? generateSlug($data['slug'])
-        : generateSlug($data['title']);
-
-    // Check if slug already exists and make it unique
-    $stmt = $conn->prepare("SELECT id FROM services WHERE slug = ?");
-    $stmt->execute([$slug]);
-    if ($stmt->fetch()) {
-        $slug .= '-' . time();
-    }
-
-    // Prepare INSERT statement with all columns
-    $stmt = $conn->prepare("
-        INSERT INTO services (
-            title, slug, description, category, roi_min, roi_max,
-            min_investment, max_investment, duration_months, 
-            image, featured, status, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-    ");
-
-    $stmt->execute([
-        $data['title'],
-        $slug,
-        $data['description'] ?? null,
-        $data['category'],
-        $data['roi_min'] ?? null,
-        $data['roi_max'] ?? null,
-        $data['min_investment'],
-        $data['max_investment'] ?? null,
-        $data['duration_months'] ?? null,
-        $data['image'] ?? null,
-        $data['featured'] ?? 0,
-        $data['status'] ?? 1
-    ]);
-
-    sendResponse([
-        'success' => true,
-        'message' => 'Service created successfully',
-        'id' => $conn->lastInsertId(),
-        'slug' => $slug
-    ], 201);
 }
 
 // ========================================
@@ -260,7 +298,8 @@ function updateService($conn)
         'min_investment',
         'max_investment',
         'duration_months',
-        'image',
+        'thumbnail_image',
+        'header_image',
         'featured',
         'status'
     ];
@@ -273,6 +312,12 @@ function updateService($conn)
             $updates[] = "$field = ?";
             $params[] = $data[$field];
         }
+    }
+
+    // Handle gallery_images separately (needs JSON encoding)
+    if (isset($data['gallery_images'])) {
+        $updates[] = "gallery_images = ?";
+        $params[] = is_array($data['gallery_images']) ? json_encode($data['gallery_images']) : $data['gallery_images'];
     }
 
     // Handle slug update (regenerate if title changed)

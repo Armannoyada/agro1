@@ -172,4 +172,41 @@ export const deleteStatistic = async (id) => {
   return response.data;
 };
 
+// Blogs API
+export const getBlogs = async (showAll = true) => {
+  const response = await api.get(`/blogs.php${showAll ? '?all=true' : ''}`);
+  return response.data;
+};
+
+export const getBlog = async (id) => {
+  const response = await api.get(`/blogs.php?id=${id}`);
+  return response.data;
+};
+
+export const createBlog = async (data) => {
+  const response = await api.post('/blogs.php', data);
+  return response.data;
+};
+
+export const updateBlog = async (id, data) => {
+  const response = await api.put('/blogs.php', { id, ...data });
+  return response.data;
+};
+
+export const deleteBlog = async (id) => {
+  const response = await api.delete('/blogs.php', { data: { id } });
+  return response.data;
+};
+
+// Video Upload API (max 50MB)
+export const uploadVideo = async (file) => {
+  const formData = new FormData();
+  formData.append('video', file);
+  const response = await api.post('/upload-video.php', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
 export default api;
+

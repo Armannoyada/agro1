@@ -84,4 +84,21 @@ export const subscribeNewsletter = async (email) => {
   return response.data;
 };
 
+// Blogs API
+export const getBlogs = async () => {
+  const response = await api.get('/blogs.php');
+  return response.data;
+};
+
+export const getBlogBySlug = async (slug) => {
+  const response = await api.get(`/blogs.php?slug=${slug}`);
+  return response.data;
+};
+
+export const getFeaturedBlogs = async (limit = 3) => {
+  const response = await api.get(`/blogs.php?featured=true&limit=${limit}`);
+  return response.data;
+};
+
 export default api;
+
