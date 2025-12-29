@@ -119,7 +119,7 @@ const Services = () => {
   return (
     <div className="bg-white">
       {/* Hero Section - Full Width Image */}
-      <section className="relative min-h-[500px] md:min-h-[550px] pb-20" ref={heroRef}>
+      <section className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[550px] pb-16 sm:pb-20" ref={heroRef}>
         <img
           src="https://images.unsplash.com/photo-1625246333195-5848c428148f?w=1600&q=80"
           alt="Agricultural Services"
@@ -127,44 +127,44 @@ const Services = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30"></div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Floating decorative elements - hidden on mobile */}
+        <div className="hidden md:block absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="hidden md:block absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-        <div className="relative flex items-center justify-center min-h-[400px]">
-          <div className="container-custom text-center">
+        <div className="relative flex items-center justify-center min-h-[350px] sm:min-h-[400px]">
+          <div className="container-custom text-center px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={heroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                 <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
                 Investment Opportunities
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 sm:mb-6 px-2">
                 Grow Your Wealth with
                 <br />
                 <span className="text-primary-400">Agricultural</span> Investments
               </h1>
 
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
                 Choose from our diverse range of agricultural investment services.
                 Each option is designed to maximize your returns while contributing to sustainable farming.
               </p>
 
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
                 <a
                   href="#services"
-                  className="inline-flex items-center gap-2 bg-primary-500 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   Browse Services
                   <KeyboardArrowDownIcon />
                 </a>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
+                  className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
                 >
                   Custom Investment
                 </Link>
@@ -174,9 +174,9 @@ const Services = () => {
         </div>
 
         {/* Floating Stats Cards */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10">
+        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10 px-4">
           <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
@@ -184,14 +184,14 @@ const Services = () => {
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${cardGradients[index]} rounded-xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
-                        {stat.icon}
+                  <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${cardGradients[index]} rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                        {React.cloneElement(stat.icon, { sx: { fontSize: { xs: 20, sm: 24 } } })}
                       </div>
-                      <div>
-                        <div className="text-xl md:text-2xl font-display font-bold text-gray-900">{stat.value}</div>
-                        <div className="text-gray-500 text-sm font-medium">{stat.label}</div>
+                      <div className="text-center sm:text-left">
+                        <div className="text-lg sm:text-xl md:text-2xl font-display font-bold text-gray-900">{stat.value}</div>
+                        <div className="text-gray-500 text-xs sm:text-sm font-medium">{stat.label}</div>
                       </div>
                     </div>
                   </div>
@@ -203,21 +203,21 @@ const Services = () => {
       </section>
 
       {/* Spacer for floating cards */}
-      <div className="h-20 md:h-24 bg-white"></div>
+      <div className="h-16 sm:h-20 md:h-24 bg-white"></div>
 
       {/* Filter Section */}
-      <section id="services" className="py-8 bg-white border-b sticky top-20 z-40">
+      <section id="services" className="py-4 sm:py-6 md:py-8 bg-white border-b sticky top-16 sm:top-20 z-40 px-4">
         <div className="container-custom">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-center justify-between">
             {/* Search */}
             <div className="relative w-full md:w-96">
-              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" sx={{ fontSize: { xs: 20, sm: 24 } }} />
               <input
                 type="text"
                 placeholder="Search services..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all shadow-sm"
+                className="w-full pl-11 sm:pl-12 pr-4 py-2.5 sm:py-3 rounded-full border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all shadow-sm text-sm sm:text-base"
               />
             </div>
 
@@ -228,7 +228,7 @@ const Services = () => {
                 <button
                   key={cat.id}
                   onClick={() => setFilter(cat.id)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${filter === cat.id
+                  className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${filter === cat.id
                     ? 'bg-gradient-to-r from-primary-500 to-green-500 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
@@ -242,29 +242,29 @@ const Services = () => {
       </section>
 
       {/* Services Grid */}
-      <section className="py-16 md:py-20 bg-gradient-to-b from-white to-gray-50" ref={ref}>
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50 px-4" ref={ref}>
         <div className="container-custom">
           {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3 sm:mb-4">
               {filter === 'all' ? 'All Investment' : categories.find(c => c.id === filter)?.name} <span className="gradient-text">Services</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
               {filteredServices.length} {filteredServices.length === 1 ? 'service' : 'services'} available
             </p>
           </motion.div>
 
           {loading ? (
             // Loading skeleton
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 animate-pulse">
-                  <div className="h-56 bg-gray-200"></div>
-                  <div className="p-6">
+                <div key={index} className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-gray-100 animate-pulse">
+                  <div className="h-48 sm:h-56 bg-gray-200"></div>
+                  <div className="p-4 sm:p-6">
                     <div className="h-6 bg-gray-200 rounded mb-3"></div>
                     <div className="h-4 bg-gray-200 rounded mb-2"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
@@ -291,7 +291,7 @@ const Services = () => {
               </button>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {filteredServices.map((service, index) => (
                 <motion.div
                   key={service.id}
@@ -300,9 +300,9 @@ const Services = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group"
                 >
-                  <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
                     {/* Image */}
-                    <div className="relative h-56 overflow-hidden">
+                    <div className="relative h-48 sm:h-56 overflow-hidden">
                       <img
                         src={service.thumbnail_image || 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&q=80'}
                         alt={service.title}
@@ -312,50 +312,50 @@ const Services = () => {
 
                       {/* Featured Badge */}
                       {(service.featured === 1 || service.featured === '1') && (
-                        <div className="absolute top-4 left-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
+                        <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-lg">
                           ⭐ Featured
                         </div>
                       )}
 
                       {/* Category Badge */}
-                      <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-full capitalize shadow-md">
+                      <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-white/95 backdrop-blur-sm text-gray-700 text-xs font-semibold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full capitalize shadow-md">
                         {service.category}
                       </div>
 
                       {/* Icon */}
-                      <div className={`absolute bottom-4 right-4 w-14 h-14 bg-gradient-to-br ${cardGradients[index % cardGradients.length]} rounded-xl shadow-lg flex items-center justify-center text-white`}>
+                      <div className={`absolute bottom-3 sm:bottom-4 right-3 sm:right-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br ${cardGradients[index % cardGradients.length]} rounded-lg sm:rounded-xl shadow-lg flex items-center justify-center text-white`}>
                         {getCategoryIcon(service.category)}
                       </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-6 flex-grow flex flex-col">
-                      <h3 className="text-xl font-display font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors">
+                    <div className="p-4 sm:p-6 flex-grow flex flex-col">
+                      <h3 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-primary-600 transition-colors">
                         {service.title}
                       </h3>
-                      <p className="text-gray-600 mb-4 flex-grow line-clamp-2 text-sm" dangerouslySetInnerHTML={{ __html: service.description || '' }} />
+                      <p className="text-gray-600 mb-3 sm:mb-4 flex-grow line-clamp-2 text-sm" dangerouslySetInnerHTML={{ __html: service.description || '' }} />
 
                       {/* Stats */}
-                      <div className="grid grid-cols-3 gap-3 py-4 border-t border-gray-100 mb-4">
-                        <div className="text-center p-2 bg-green-50 rounded-xl">
+                      <div className="grid grid-cols-3 gap-2 sm:gap-3 py-3 sm:py-4 border-t border-gray-100 mb-3 sm:mb-4">
+                        <div className="text-center p-2 bg-green-50 rounded-lg sm:rounded-xl">
                           <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
                             <TrendingUpIcon sx={{ fontSize: 16 }} />
                           </div>
-                          <p className="font-bold text-green-600 text-sm">{formatROI(service.roi_min, service.roi_max)}</p>
+                          <p className="font-bold text-green-600 text-xs sm:text-sm">{formatROI(service.roi_min, service.roi_max)}</p>
                           <p className="text-xs text-gray-500">Returns</p>
                         </div>
-                        <div className="text-center p-2 bg-blue-50 rounded-xl">
+                        <div className="text-center p-2 bg-blue-50 rounded-lg sm:rounded-xl">
                           <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
                             <AccountBalanceWalletIcon sx={{ fontSize: 16 }} />
                           </div>
-                          <p className="font-bold text-blue-600 text-sm">{formatInvestment(service.min_investment)}</p>
+                          <p className="font-bold text-blue-600 text-xs sm:text-sm">{formatInvestment(service.min_investment)}</p>
                           <p className="text-xs text-gray-500">Min. Invest</p>
                         </div>
-                        <div className="text-center p-2 bg-purple-50 rounded-xl">
+                        <div className="text-center p-2 bg-purple-50 rounded-lg sm:rounded-xl">
                           <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
                             <AccessTimeIcon sx={{ fontSize: 16 }} />
                           </div>
-                          <p className="font-bold text-purple-600 text-sm">{service.duration_months ? `${service.duration_months}M` : 'N/A'}</p>
+                          <p className="font-bold text-purple-600 text-xs sm:text-sm">{service.duration_months ? `${service.duration_months}M` : 'N/A'}</p>
                           <p className="text-xs text-gray-500">Duration</p>
                         </div>
                       </div>
@@ -363,7 +363,7 @@ const Services = () => {
                       {/* CTA */}
                       <Link
                         to={`/services/${service.slug}`}
-                        className="inline-flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-primary-500 to-green-500 text-white rounded-xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all group/btn"
+                        className="inline-flex items-center justify-center gap-2 w-full py-3 sm:py-3.5 bg-gradient-to-r from-primary-500 to-green-500 text-white rounded-lg sm:rounded-xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all group/btn text-sm sm:text-base"
                       >
                         View Details
                         <ArrowForwardIcon fontSize="small" className="group-hover/btn:translate-x-1 transition-transform" />
@@ -378,41 +378,41 @@ const Services = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-green-500 rounded-3xl p-10 md:p-16 text-white text-center relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-green-500 rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-16 text-white text-center relative overflow-hidden">
+              {/* Decorative elements - hidden on mobile */}
+              <div className="hidden sm:block absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="hidden sm:block absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
 
               <div className="relative">
-                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                   <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                   Custom Solutions
                 </div>
 
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 sm:mb-6">
                   Can't Find What You're Looking For?
                 </h2>
-                <p className="text-primary-100 text-lg max-w-2xl mx-auto mb-10">
+                <p className="text-primary-100 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-10">
                   Contact us to discuss custom investment opportunities tailored to your specific needs and goals.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
                     to="/contact"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-primary-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-primary-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl"
                   >
                     Contact Us
                     <ArrowForwardIcon />
                   </Link>
                   <a
                     href="tel:+911234567890"
-                    className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
+                    className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
                   >
                     Call Now
                   </a>

@@ -5,9 +5,11 @@ import {
   Button, Grid, Tabs, Tab,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Search, Visibility, Delete, Email, CheckCircle, AccessTime, Reply } from '@mui/icons-material';
+import { Search, Visibility, Delete, Email, CheckCircle, AccessTime, Reply, FileDownload } from '@mui/icons-material';
 import { getContacts, updateContactStatus, deleteContact } from '../services/api';
 import toast from 'react-hot-toast';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/Agro/agro1/backend';
 
 const Contacts = () => {
   const [contacts, setContacts] = useState([]);
@@ -52,6 +54,11 @@ const Contacts = () => {
     }
   };
 
+  const handleExportExcel = () => {
+    window.open(`${API_URL}/export-contacts.php`, '_blank');
+    toast.success('Downloading Excel file...');
+  };
+
   const getStatusChip = (status) => {
     if (status === 'read') return <Chip icon={<CheckCircle fontSize="small" />} label="Read" size="small" color="success" />;
     return <Chip icon={<AccessTime fontSize="small" />} label="Unread" size="small" color="warning" />;
@@ -70,12 +77,14 @@ const Contacts = () => {
     { field: 'subject', headerName: 'Subject', flex: 1, minWidth: 200 },
     { field: 'status', headerName: 'Status', width: 100, renderCell: (params) => getStatusChip(params.value) },
     { field: 'created_at', headerName: 'Date', width: 120, renderCell: (params) => new Date(params.value).toLocaleDateString() },
-    { field: 'actions', headerName: 'Actions', width: 120, sortable: false, renderCell: (params) => (
-      <Box>
-        <Tooltip title="View"><IconButton size="small" color="primary" onClick={() => { setViewDialog({ open: true, contact: params.row }); if (params.row.status !== 'read') handleMarkAsRead(params.row.id); }}><Visibility /></IconButton></Tooltip>
-        <Tooltip title="Delete"><IconButton size="small" color="error" onClick={() => handleDelete(params.row.id)}><Delete /></IconButton></Tooltip>
-      </Box>
-    )},
+    {
+      field: 'actions', headerName: 'Actions', width: 120, sortable: false, renderCell: (params) => (
+        <Box>
+          <Tooltip title="View"><IconButton size="small" color="primary" onClick={() => { setViewDialog({ open: true, contact: params.row }); if (params.row.status !== 'read') handleMarkAsRead(params.row.id); }}><Visibility /></IconButton></Tooltip>
+          <Tooltip title="Delete"><IconButton size="small" color="error" onClick={() => handleDelete(params.row.id)}><Delete /></IconButton></Tooltip>
+        </Box>
+      )
+    },
   ];
 
   const tabCounts = { all: contacts.length, unread: contacts.filter((c) => c.status !== 'read').length, read: contacts.filter((c) => c.status === 'read').length };
@@ -95,7 +104,18 @@ const Contacts = () => {
               <Tab label={`Unread (${tabCounts.unread})`} value="unread" />
               <Tab label={`Read (${tabCounts.read})`} value="read" />
             </Tabs>
-            <TextField placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} size="small" sx={{ width: 250 }} InputProps={{ startAdornment: <InputAdornment position="start"><Search /></InputAdornment> }} />
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <TextField placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} size="small" sx={{ width: 250 }} InputProps={{ startAdornment: <InputAdornment position="start"><Search /></InputAdornment> }} />
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<FileDownload />}
+                onClick={handleExportExcel}
+                disabled={contacts.length === 0}
+              >
+                Export Excel
+              </Button>
+            </Box>
           </Box>
           <DataGrid rows={filteredContacts} columns={columns} pageSize={10} autoHeight disableSelectionOnClick loading={loading} sx={{ border: 'none' }} />
         </CardContent>

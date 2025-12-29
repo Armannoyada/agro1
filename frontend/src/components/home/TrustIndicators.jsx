@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import GppGoodIcon from '@mui/icons-material/GppGood';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
@@ -14,12 +13,6 @@ const TrustIndicators = () => {
 
     const badges = [
         {
-            icon: <VerifiedUserIcon sx={{ fontSize: 40 }} />,
-            title: 'SEBI Compliant',
-            description: 'Registered & regulated investment platform',
-            color: 'from-blue-500 to-blue-600',
-        },
-        {
             icon: <GppGoodIcon sx={{ fontSize: 40 }} />,
             title: 'ISO Certified',
             description: 'Quality management standards',
@@ -27,7 +20,7 @@ const TrustIndicators = () => {
         },
         {
             icon: <WorkspacePremiumIcon sx={{ fontSize: 40 }} />,
-            title: 'Government Approved',
+            title: 'Govt. Approved',
             description: 'Ministry of Agriculture recognized',
             color: 'from-amber-500 to-amber-600',
         },
@@ -56,7 +49,7 @@ const TrustIndicators = () => {
                     </h3>
                 </motion.div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                     {badges.map((badge, index) => (
                         <motion.div
                             key={index}

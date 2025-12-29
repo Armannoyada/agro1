@@ -33,6 +33,7 @@ import ServiceForm from './admin/pages/ServiceForm';
 import Categories from './admin/pages/Categories';
 import Inquiries from './admin/pages/Inquiries';
 import Contacts from './admin/pages/Contacts';
+import NewsletterSubscribers from './admin/pages/NewsletterSubscribers';
 import Testimonials from './admin/pages/Testimonials';
 import Team from './admin/pages/Team';
 import Settings from './admin/pages/Settings';
@@ -120,6 +121,7 @@ const AdminRoutes = () => {
         <Route path="categories" element={<Categories />} />
         <Route path="inquiries" element={<Inquiries />} />
         <Route path="contacts" element={<Contacts />} />
+        <Route path="newsletter" element={<NewsletterSubscribers />} />
         <Route path="blogs" element={<Blogs />} />
         <Route path="blogs/create" element={<BlogForm />} />
         <Route path="blogs/edit/:id" element={<BlogForm />} />

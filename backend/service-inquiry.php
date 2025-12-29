@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Set CORS headers before any output
 header('Access-Control-Allow-Origin: http://localhost:3000');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -129,16 +134,58 @@ function createInquiry($conn)
     $serviceTitle = isset($data['service_title']) ? htmlspecialchars(strip_tags($data['service_title']), ENT_QUOTES, 'UTF-8') : null;
     $name = htmlspecialchars(strip_tags($data['name']), ENT_QUOTES, 'UTF-8');
     $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
-    $investmentAmount = isset($data['investment_amount']) && is_numeric($data['investment_amount'])
-        ? intval($data['investment_amount'])
-        : null;
+
+    // Investment amount can be a string range or numeric value
+    $investmentAmount = isset($data['investment_amount']) ? $data['investment_amount'] : null;
 
     // Insert into database
     try {
+        // First, ensure the table exists with correct structure
+        $conn->exec("
+            CREATE TABLE IF NOT EXISTS service_inquiries (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                service_id INT NULL,
+                service_title VARCHAR(255) NULL,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                investment_amount VARCHAR(50) NULL,
+                status VARCHAR(20) DEFAULT 'pending',
+                admin_notes TEXT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
+        // Try to add missing columns (will silently fail if they exist)
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN service_title VARCHAR(255) NULL");
+        } catch (Exception $e) {
+        }
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN name VARCHAR(255) NOT NULL DEFAULT ''");
+        } catch (Exception $e) {
+        }
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN email VARCHAR(255) NOT NULL DEFAULT ''");
+        } catch (Exception $e) {
+        }
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN phone VARCHAR(20) NOT NULL DEFAULT ''");
+        } catch (Exception $e) {
+        }
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN investment_amount VARCHAR(50) NULL");
+        } catch (Exception $e) {
+        }
+        try {
+            $conn->exec("ALTER TABLE service_inquiries ADD COLUMN status VARCHAR(20) DEFAULT 'pending'");
+        } catch (Exception $e) {
+        }
+
         $stmt = $conn->prepare("
             INSERT INTO service_inquiries (
-                service_id, service_title, name, email, phone, investment_amount, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW())
+                service_id, service_title, name, email, phone, investment_amount, status, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
         ");
 
         $stmt->execute([
@@ -157,8 +204,14 @@ function createInquiry($conn)
         ]);
 
     } catch (PDOException $e) {
+        // Log the actual error for debugging
+        error_log("Service Inquiry Error: " . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['error' => 'Failed to submit inquiry. Please try again.']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Failed to submit inquiry. Please try again.',
+            'debug' => $e->getMessage()
+        ]);
     }
 }
 

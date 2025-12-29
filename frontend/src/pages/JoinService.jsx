@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -11,13 +11,16 @@ import SendIcon from '@mui/icons-material/Send';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SecurityIcon from '@mui/icons-material/Security';
 import toast from 'react-hot-toast';
-import { TextField, MenuItem, FormControl, InputLabel, Select } from '@mui/material';
+import { TextField, MenuItem, FormControl, InputLabel, Select, CircularProgress } from '@mui/material';
+import { submitServiceInquiry, getServices } from '../services/api';
 
 const JoinService = () => {
   const { serviceId } = useParams();
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -32,24 +35,37 @@ const JoinService = () => {
     termsAccepted: false,
   });
 
-  const services = [
-    { id: '1', name: 'Organic Farming', minInvestment: 50000 },
-    { id: '2', name: 'Hydroponic Systems', minInvestment: 75000 },
-    { id: '3', name: 'Dairy Farming', minInvestment: 100000 },
-    { id: '4', name: 'Fruit Orchards', minInvestment: 200000 },
-    { id: '5', name: 'Mushroom Cultivation', minInvestment: 30000 },
-    { id: '6', name: 'Contract Farming', minInvestment: 150000 },
-    { id: '7', name: 'Poultry Farming', minInvestment: 80000 },
-    { id: '8', name: 'Smart Greenhouse', minInvestment: 150000 },
-  ];
+  // Fetch services from API on component mount
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await getServices();
+        if (response.success && response.data) {
+          setServices(response.data);
+          // If serviceId is provided, pre-select it
+          if (serviceId) {
+            setFormData(prev => ({ ...prev, service: serviceId }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+        toast.error('Failed to load services');
+      } finally {
+        setServicesLoading(false);
+      }
+    };
 
+    fetchServices();
+  }, [serviceId]);
+
+  // Investment ranges (can be made dynamic later if needed)
   const investmentRanges = [
-    '₹30,000 - ₹50,000',
-    '₹50,000 - ₹1,00,000',
-    '₹1,00,000 - ₹2,50,000',
-    '₹2,50,000 - ₹5,00,000',
-    '₹5,00,000 - ₹10,00,000',
-    '₹10,00,000+',
+    { value: '30000-50000', label: '₹30,000 - ₹50,000' },
+    { value: '50000-100000', label: '₹50,000 - ₹1,00,000' },
+    { value: '100000-250000', label: '₹1,00,000 - ₹2,50,000' },
+    { value: '250000-500000', label: '₹2,50,000 - ₹5,00,000' },
+    { value: '500000-1000000', label: '₹5,00,000 - ₹10,00,000' },
+    { value: '1000000+', label: '₹10,00,000+' },
   ];
 
   const states = [
@@ -84,20 +100,55 @@ const JoinService = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.termsAccepted) {
       toast.error('Please accept the terms and conditions');
       return;
     }
 
     setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast.success('Application submitted successfully! Our team will contact you soon.');
+
+    try {
+      // Get selected service - compare as strings since dropdown value is string
+      const selectedService = services.find(s => String(s.id) === formData.service);
+
+      // Prepare data for API
+      const payload = {
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        service_id: formData.service ? parseInt(formData.service) : null,
+        service_title: selectedService?.title || 'General Inquiry',
+        investment_amount: formData.investmentAmount || null,
+      };
+
+      console.log('Submitting payload:', payload);
+
+      const response = await submitServiceInquiry(payload);
+      console.log('API Response:', response);
+
+      if (response.success) {
+        toast.success('Application submitted successfully! Our team will contact you soon.');
+        setStep(4); // Success step
+      } else {
+        toast.error(response.error || 'Failed to submit application. Please try again.');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      console.error('Error response:', error.response);
+      // Show the actual error message from the backend
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to submit application. Please try again.';
+      const debugMessage = error.response?.data?.debug;
+
+      if (debugMessage) {
+        console.error('Backend debug message:', debugMessage);
+        toast.error(`${errorMessage}\n\nDebug: ${debugMessage}`);
+      } else {
+        toast.error(errorMessage);
+      }
+    } finally {
       setLoading(false);
-      setStep(4); // Success step
-    }, 2000);
+    }
   };
 
   const benefits = [
@@ -114,7 +165,7 @@ const JoinService = () => {
       {/* Hero Section */}
       <section className="relative py-16 bg-gradient-to-br from-primary-50 via-white to-primary-100 overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        
+
         <div className="container-custom relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -126,13 +177,13 @@ const JoinService = () => {
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               Join Our Services
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-900 mb-6">
               Start Your <span className="gradient-text">Investment Journey</span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-              Fill out the form below to join our agricultural investment program. 
+              Fill out the form below to join our agricultural investment program.
               Our team will review your application and get in touch within 24 hours.
             </p>
           </motion.div>
@@ -155,17 +206,15 @@ const JoinService = () => {
                 <div className="flex items-center justify-between mb-8">
                   {[1, 2, 3].map((s) => (
                     <div key={s} className="flex items-center">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                        step >= s 
-                          ? 'bg-primary-500 text-white' 
-                          : 'bg-gray-200 text-gray-500'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${step >= s
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-200 text-gray-500'
+                        }`}>
                         {step > s ? <CheckCircleIcon /> : s}
                       </div>
                       {s < 3 && (
-                        <div className={`w-full h-1 mx-2 ${
-                          step > s ? 'bg-primary-500' : 'bg-gray-200'
-                        }`} style={{ width: '80px' }}></div>
+                        <div className={`w-full h-1 mx-2 ${step > s ? 'bg-primary-500' : 'bg-gray-200'
+                          }`} style={{ width: '80px' }}></div>
                       )}
                     </div>
                   ))}
@@ -185,7 +234,7 @@ const JoinService = () => {
                       Application Submitted Successfully!
                     </h2>
                     <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                      Thank you for your interest in AgroTech. Our investment advisor will 
+                      Thank you for your interest in AgroTech. Our investment advisor will
                       contact you within 24 hours to discuss your investment options.
                     </p>
                     <div className="flex gap-4 justify-center">
@@ -349,12 +398,19 @@ const JoinService = () => {
                               onChange={handleChange}
                               label="Select Service"
                               required
+                              disabled={servicesLoading}
                             >
-                              {services.map((service) => (
-                                <MenuItem key={service.id} value={service.id}>
-                                  {service.name} (Min: ₹{service.minInvestment.toLocaleString()})
-                                </MenuItem>
-                              ))}
+                              {servicesLoading ? (
+                                <MenuItem disabled>Loading services...</MenuItem>
+                              ) : services.length === 0 ? (
+                                <MenuItem disabled>No services available</MenuItem>
+                              ) : (
+                                services.map((service) => (
+                                  <MenuItem key={service.id} value={String(service.id)}>
+                                    {service.title}
+                                  </MenuItem>
+                                ))
+                              )}
                             </Select>
                           </FormControl>
                           <FormControl fullWidth variant="outlined">
@@ -367,7 +423,7 @@ const JoinService = () => {
                               required
                             >
                               {investmentRanges.map((range) => (
-                                <MenuItem key={range} value={range}>{range}</MenuItem>
+                                <MenuItem key={range.value} value={range.value}>{range.label}</MenuItem>
                               ))}
                             </Select>
                           </FormControl>
@@ -481,7 +537,7 @@ const JoinService = () => {
                   </h3>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  Your information is encrypted and secure. We never share your 
+                  Your information is encrypted and secure. We never share your
                   personal data with third parties.
                 </p>
               </div>

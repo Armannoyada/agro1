@@ -7,16 +7,29 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SecurityIcon from '@mui/icons-material/Security';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import GrassIcon from '@mui/icons-material/Grass';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import GppGoodIcon from '@mui/icons-material/GppGood';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
+import { useCompany } from '../../context/CompanyContext';
 
 const WhyChooseUs = () => {
   const [ref, inView] = useInView({
     threshold: 0.2,
     triggerOnce: true,
   });
+
+  // Get statistics from CompanyContext (same source as StatsSection)
+  const { statistics } = useCompany();
+
+  // Default stats fallback
+  const defaultStats = [
+    { label: 'Satisfaction', value: '99', suffix: '%' },
+    { label: 'Returns', value: '₹50Cr', suffix: '+' },
+    { label: 'Projects', value: '500', suffix: '+' },
+  ];
+
+  // Use first 3 statistics from API, or fallback
+  const statsToDisplay = statistics && statistics.length > 0 ? statistics.slice(0, 3) : defaultStats;
 
   const reasons = [
     {
@@ -51,13 +64,8 @@ const WhyChooseUs = () => {
     },
   ];
 
-  // Trust badges (merged from TrustIndicators)
+  // Trust badges
   const badges = [
-    {
-      icon: <VerifiedUserIcon sx={{ fontSize: { xs: 22, md: 28 } }} />,
-      title: 'SEBI Compliant',
-      color: 'from-blue-500 to-blue-600',
-    },
     {
       icon: <GppGoodIcon sx={{ fontSize: { xs: 22, md: 28 } }} />,
       title: 'ISO Certified',
@@ -75,6 +83,13 @@ const WhyChooseUs = () => {
     },
   ];
 
+  // Format display value with suffix
+  const formatStatValue = (stat) => {
+    const value = stat.value || '';
+    const suffix = stat.suffix || '';
+    return `${value}${suffix}`;
+  };
+
   return (
     <section className="pt-6 md:pt-12 pb-12 md:pb-24 px-4 md:px-8 bg-gradient-to-b from-white to-gray-50" ref={ref}>
       <div className="container-custom">
@@ -86,14 +101,14 @@ const WhyChooseUs = () => {
           className="mb-8 md:mb-10"
         >
           <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-3 gap-4 md:gap-6 max-w-3xl mx-auto">
               {badges.map((badge, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={inView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="flex items-center gap-2 md:gap-3 group"
+                  className="flex items-center justify-center gap-2 md:gap-3 group"
                 >
                   <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br ${badge.color} flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform flex-shrink-0`}>
                     {badge.icon}
@@ -167,7 +182,7 @@ const WhyChooseUs = () => {
                 />
               </div>
 
-              {/* Stats Cards */}
+              {/* Stats Cards - Dynamic from API (same data as StatsSection) */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={inView ? { opacity: 1, scale: 1 } : {}}
@@ -175,18 +190,14 @@ const WhyChooseUs = () => {
                 className="absolute -bottom-4 md:-bottom-6 left-3 md:left-6 right-3 md:right-6 bg-white rounded-xl md:rounded-2xl shadow-xl p-4 md:p-6"
               >
                 <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
-                  <div>
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-primary-600">99%</p>
-                    <p className="text-xs md:text-sm text-gray-500">Satisfaction</p>
-                  </div>
-                  <div className="border-x border-gray-200">
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-primary-600">₹50Cr+</p>
-                    <p className="text-xs md:text-sm text-gray-500">Returns</p>
-                  </div>
-                  <div>
-                    <p className="text-lg sm:text-xl md:text-3xl font-bold text-primary-600">500+</p>
-                    <p className="text-xs md:text-sm text-gray-500">Projects</p>
-                  </div>
+                  {statsToDisplay.map((stat, index) => (
+                    <div key={stat.id || index} className={index > 0 ? 'border-l border-gray-200' : ''}>
+                      <p className="text-lg sm:text-xl md:text-3xl font-bold text-primary-600">
+                        {formatStatValue(stat)}
+                      </p>
+                      <p className="text-xs md:text-sm text-gray-500">{stat.label}</p>
+                    </div>
+                  ))}
                 </div>
               </motion.div>
 

@@ -5,9 +5,11 @@ import {
   Button, Grid, Tabs, Tab,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Search, Visibility, CheckCircle, Cancel, Pending, Email, Phone, AttachMoney } from '@mui/icons-material';
+import { Search, Visibility, CheckCircle, Cancel, Pending, Email, Phone, AttachMoney, FileDownload } from '@mui/icons-material';
 import { getServiceInquiries, updateInquiryStatus } from '../services/api';
 import toast from 'react-hot-toast';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/Agro/agro1/backend';
 
 const Inquiries = () => {
   const [inquiries, setInquiries] = useState([]);
@@ -44,6 +46,12 @@ const Inquiries = () => {
     } catch (error) {
       toast.error('Failed to update status');
     }
+  };
+
+  const handleExportExcel = () => {
+    // Open the export endpoint in a new window to trigger download
+    window.open(`${API_URL}/export-inquiries.php`, '_blank');
+    toast.success('Downloading Excel file...');
   };
 
   const getStatusChip = (status) => {
@@ -154,14 +162,25 @@ const Inquiries = () => {
               <Tab label={`Approved (${tabCounts.approved})`} value="approved" />
               <Tab label={`Rejected (${tabCounts.rejected})`} value="rejected" />
             </Tabs>
-            <TextField
-              placeholder="Search by name, email, service..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              size="small"
-              sx={{ width: 280 }}
-              InputProps={{ startAdornment: <InputAdornment position="start"><Search /></InputAdornment> }}
-            />
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <TextField
+                placeholder="Search by name, email, service..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                size="small"
+                sx={{ width: 280 }}
+                InputProps={{ startAdornment: <InputAdornment position="start"><Search /></InputAdornment> }}
+              />
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<FileDownload />}
+                onClick={handleExportExcel}
+                disabled={inquiries.length === 0}
+              >
+                Export Excel
+              </Button>
+            </Box>
           </Box>
           <DataGrid
             rows={filteredInquiries}

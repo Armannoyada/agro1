@@ -227,157 +227,88 @@ const BlogList = () => {
                         </div>
                     ) : (
                         <>
-                            {/* Featured Posts */}
-                            {featuredBlogs.length > 0 && (
-                                <div className="mb-16">
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white">
-                                            <TrendingUpIcon />
-                                        </div>
-                                        <h2 className="text-2xl font-display font-bold text-gray-900">Featured Articles</h2>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 gap-8">
-                                        {featuredBlogs.slice(0, 2).map((blog, index) => (
-                                            <motion.article
-                                                key={blog.id}
-                                                initial={{ opacity: 0, y: 30 }}
-                                                animate={inView ? { opacity: 1, y: 0 } : {}}
-                                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                                className="group"
-                                            >
-                                                <Link to={`/blog/${blog.slug}`} className="block">
-                                                    <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
-                                                        <div className="relative aspect-[16/9] overflow-hidden">
-                                                            <img
-                                                                src={blog.featured_image || DEFAULT_IMAGE}
-                                                                alt={blog.title}
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                                onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-                                                            />
-                                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-                                                            {/* Badges */}
-                                                            <div className="absolute top-4 left-4 flex gap-2">
-                                                                {(blog.video_url || blog.video_file) && (
-                                                                    <div className="bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-                                                                        <PlayCircleIcon fontSize="small" />
-                                                                        Video
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                            <div className="absolute top-4 right-4">
-                                                                <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                                                                    ⭐ Featured
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Category at bottom */}
-                                                            {blog.category && (
-                                                                <div className="absolute bottom-4 left-4">
-                                                                    <span className="bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-1.5 rounded-full text-sm font-semibold shadow-md">
-                                                                        {blog.category}
-                                                                    </span>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="p-6">
-                                                            <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                                                                <span className="flex items-center gap-1">
-                                                                    <CalendarTodayIcon sx={{ fontSize: 16 }} />
-                                                                    {formatDate(blog.created_at)}
-                                                                </span>
-                                                                {blog.views && (
-                                                                    <span className="flex items-center gap-1">
-                                                                        <VisibilityIcon sx={{ fontSize: 16 }} />
-                                                                        {blog.views} views
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <h3 className="text-xl font-display font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors line-clamp-2">
-                                                                {blog.title}
-                                                            </h3>
-                                                            <p className="text-gray-600 line-clamp-2 mb-4">{blog.excerpt}</p>
-                                                            <div className="flex items-center gap-2 text-primary-600 font-semibold">
-                                                                Read Article <ArrowForwardIcon fontSize="small" className="group-hover:translate-x-1 transition-transform" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            </motion.article>
-                                        ))}
-                                    </div>
+                            {/* Section Header */}
+                            <div className="flex items-center gap-3 mb-8">
+                                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-green-500 rounded-xl flex items-center justify-center text-white">
+                                    <ArticleIcon />
                                 </div>
-                            )}
+                                <h2 className="text-2xl font-display font-bold text-gray-900">All Articles</h2>
+                                <span className="text-gray-500 text-sm ml-2">({filteredBlogs.length} articles)</span>
+                            </div>
 
-                            {/* Regular Posts */}
-                            {regularBlogs.length > 0 && (
-                                <div>
-                                    <div className="flex items-center gap-3 mb-8">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center text-white">
-                                            <ArticleIcon />
-                                        </div>
-                                        <h2 className="text-2xl font-display font-bold text-gray-900">Latest Articles</h2>
-                                    </div>
-                                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                        {regularBlogs.map((blog, index) => (
-                                            <motion.article
-                                                key={blog.id}
-                                                initial={{ opacity: 0, y: 30 }}
-                                                animate={inView ? { opacity: 1, y: 0 } : {}}
-                                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                                className="group"
-                                            >
-                                                <Link to={`/blog/${blog.slug}`} className="block">
-                                                    <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
-                                                        <div className="relative aspect-[16/10] overflow-hidden">
-                                                            <img
-                                                                src={blog.featured_image || DEFAULT_IMAGE}
-                                                                alt={blog.title}
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                                onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-                                                            />
-                                                            {(blog.video_url || blog.video_file) && (
-                                                                <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1 shadow-lg">
-                                                                    <PlayCircleIcon fontSize="small" />
-                                                                    Video
-                                                                </div>
-                                                            )}
-                                                            {blog.category && (
-                                                                <div className="absolute top-4 right-4">
-                                                                    <span className="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-                                                                        {blog.category}
-                                                                    </span>
-                                                                </div>
-                                                            )}
+                            {/* Unified Blog Grid */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {filteredBlogs.map((blog, index) => (
+                                    <motion.article
+                                        key={blog.id}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={inView ? { opacity: 1, y: 0 } : {}}
+                                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                                        className="group"
+                                    >
+                                        <Link to={`/blog/${blog.slug}`} className="block">
+                                            <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
+                                                <div className="relative aspect-[16/10] overflow-hidden">
+                                                    <img
+                                                        src={blog.featured_image || DEFAULT_IMAGE}
+                                                        alt={blog.title}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                                                    />
+                                                    {/* Video badge - top left */}
+                                                    {(blog.video_url || blog.video_file) && (
+                                                        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+                                                            <PlayCircleIcon sx={{ fontSize: 14 }} />
+                                                            Video
                                                         </div>
-                                                        <div className="p-6 flex-grow flex flex-col">
-                                                            <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                                                                <span className="flex items-center gap-1">
-                                                                    <CalendarTodayIcon sx={{ fontSize: 14 }} />
-                                                                    {formatDate(blog.created_at)}
-                                                                </span>
-                                                                {blog.views && (
-                                                                    <span className="flex items-center gap-1">
-                                                                        <VisibilityIcon sx={{ fontSize: 14 }} />
-                                                                        {blog.views}
-                                                                    </span>
-                                                                )}
+                                                    )}
+                                                    {/* Featured/Latest badge - top right corner */}
+                                                    <div className="absolute top-4 right-4">
+                                                        {blog.featured === 1 ? (
+                                                            <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                                ⭐ Featured
                                                             </div>
-                                                            <h3 className="text-lg font-display font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2 flex-grow">
-                                                                {blog.title}
-                                                            </h3>
-                                                            <p className="text-gray-600 text-sm line-clamp-2 mb-4">{blog.excerpt}</p>
-                                                            <div className="flex items-center gap-2 text-primary-600 font-semibold text-sm mt-auto">
-                                                                Read More <ArrowForwardIcon fontSize="small" className="group-hover:translate-x-1 transition-transform" />
+                                                        ) : (
+                                                            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                                Latest
                                                             </div>
-                                                        </div>
+                                                        )}
                                                     </div>
-                                                </Link>
-                                            </motion.article>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                                    {/* Category badge - bottom left */}
+                                                    {blog.category && (
+                                                        <div className="absolute bottom-4 left-4">
+                                                            <span className="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                                                                {blog.category}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="p-6 flex-grow flex flex-col">
+                                                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                                                        <span className="flex items-center gap-1">
+                                                            <CalendarTodayIcon sx={{ fontSize: 14 }} />
+                                                            {formatDate(blog.created_at)}
+                                                        </span>
+                                                        {blog.views && (
+                                                            <span className="flex items-center gap-1">
+                                                                <VisibilityIcon sx={{ fontSize: 14 }} />
+                                                                {blog.views}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <h3 className="text-lg font-display font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2 flex-grow">
+                                                        {blog.title}
+                                                    </h3>
+                                                    <p className="text-gray-600 text-sm line-clamp-2 mb-4">{blog.excerpt}</p>
+                                                    <div className="flex items-center gap-2 text-primary-600 font-semibold text-sm mt-auto">
+                                                        Read More <ArrowForwardIcon fontSize="small" className="group-hover:translate-x-1 transition-transform" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </motion.article>
+                                ))}
+                            </div>
                         </>
                     )}
                 </div>

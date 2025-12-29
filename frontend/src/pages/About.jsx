@@ -125,7 +125,7 @@ const About = () => {
   return (
     <div className="bg-white">
       {/* Hero Section - Full Width Image */}
-      <section className="relative min-h-[600px] md:min-h-[650px] pb-24" ref={heroRef}>
+      <section className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[650px] pb-16 sm:pb-20 md:pb-24" ref={heroRef}>
         <img
           src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80"
           alt="Agricultural Fields"
@@ -133,44 +133,44 @@ const About = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30"></div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Floating decorative elements - hidden on mobile */}
+        <div className="hidden md:block absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="hidden md:block absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-        <div className="relative flex items-center justify-center min-h-[450px]">
-          <div className="container-custom text-center">
+        <div className="relative flex items-center justify-center min-h-[350px] sm:min-h-[400px] md:min-h-[450px]">
+          <div className="container-custom text-center px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={heroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                 <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
                 About AgroTech Solutions
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 sm:mb-6 px-2">
                 Cultivating <span className="text-primary-400">Tomorrow's</span>
                 <br />
                 Agriculture Today
               </h1>
 
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 px-4">
                 For over 15 years, we've been bridging the gap between investors and the farming
                 community through innovation, sustainability, and trusted partnerships.
               </p>
 
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
                 <Link
                   to="/services"
-                  className="inline-flex items-center gap-2 bg-primary-500 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="inline-flex items-center justify-center gap-2 bg-primary-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   Explore Services
-                  <ArrowForwardIcon />
+                  <ArrowForwardIcon className="text-lg sm:text-base" />
                 </Link>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
+                  className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
                 >
                   Get In Touch
                 </Link>
@@ -180,9 +180,9 @@ const About = () => {
         </div>
 
         {/* Floating Stats Cards - Overlapping Hero Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10" ref={statsRef}>
+        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10 px-4" ref={statsRef}>
           <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
               {stats.map((stat, index) => (
                 <motion.div
                   key={index}
@@ -190,14 +190,14 @@ const About = () => {
                   animate={statsInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
-                        {stat.icon}
+                  <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${stat.gradient} rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                        {React.cloneElement(stat.icon, { sx: { fontSize: { xs: 20, sm: 28 } } })}
                       </div>
-                      <div>
-                        <div className="text-2xl md:text-3xl font-display font-bold text-gray-900">{stat.value}</div>
-                        <div className="text-gray-500 text-sm font-medium">{stat.label}</div>
+                      <div className="text-center sm:text-left">
+                        <div className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-gray-900">{stat.value}</div>
+                        <div className="text-gray-500 text-xs sm:text-sm font-medium">{stat.label}</div>
                       </div>
                     </div>
                   </div>
@@ -209,12 +209,12 @@ const About = () => {
       </section>
 
       {/* Spacer for floating cards */}
-      <div className="h-20 md:h-24 bg-white"></div>
+      <div className="h-16 sm:h-20 md:h-24 bg-white"></div>
 
       {/* Story Section */}
-      <section className="py-16 md:py-24" ref={storyRef}>
+      <section className="py-12 sm:py-16 md:py-24 px-4" ref={storyRef}>
         <div className="container-custom">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={storyInView ? { opacity: 1, x: 0 } : {}}
@@ -222,17 +222,17 @@ const About = () => {
             >
               <div className="relative">
                 {/* Main Image */}
-                <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white">
                   <img
                     src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=80"
                     alt="Our Story"
-                    className="w-full h-[450px] object-cover"
+                    className="w-full h-64 sm:h-80 md:h-[450px] object-cover"
                   />
                 </div>
 
-                {/* Floating Stats Cards */}
+                {/* Floating Stats Cards - Hidden on mobile to avoid overlap */}
                 <motion.div
-                  className="absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-xl p-5 border border-gray-100"
+                  className="hidden md:block absolute -bottom-8 -right-8 bg-white rounded-2xl shadow-xl p-5 border border-gray-100"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={storyInView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 }}
@@ -249,7 +249,7 @@ const About = () => {
                 </motion.div>
 
                 <motion.div
-                  className="absolute -top-6 -left-6 bg-white rounded-2xl shadow-xl p-5 border border-gray-100"
+                  className="hidden md:block absolute -top-6 -left-6 bg-white rounded-2xl shadow-xl p-5 border border-gray-100"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={storyInView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.5, delay: 0.4 }}
@@ -265,8 +265,8 @@ const About = () => {
                   </div>
                 </motion.div>
 
-                {/* Decorative glow */}
-                <div className="absolute -z-10 top-10 left-10 w-full h-full bg-gradient-to-br from-primary-200 to-green-200 rounded-3xl blur-2xl opacity-50"></div>
+                {/* Decorative glow - hidden on mobile */}
+                <div className="hidden md:block absolute -z-10 top-10 left-10 w-full h-full bg-gradient-to-br from-primary-200 to-green-200 rounded-3xl blur-2xl opacity-50"></div>
               </div>
             </motion.div>
 
@@ -275,42 +275,42 @@ const About = () => {
               animate={storyInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-4 sm:mb-6">
                 <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
                 Our Story
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4 sm:mb-6">
                 From a <span className="gradient-text">Vision</span> to a <span className="gradient-text">Movement</span>
               </h2>
 
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
+              <p className="text-gray-600 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">
                 Founded in 2009 by Dr. Ramesh Agarwal, a visionary agriculturist, AgroTech Solutions
                 began with a simple idea: make agricultural investment accessible to everyone while
                 supporting sustainable farming practices.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-6 text-lg">
+              <p className="text-gray-600 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">
                 What started as a small initiative with 50 acres and 10 investors has now grown into
                 a nationwide movement spanning 15 states, with over 10,000 acres under cultivation
                 and 5,000+ satisfied investors.
               </p>
-              <p className="text-gray-600 leading-relaxed text-lg">
+              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
                 Today, we combine traditional farming wisdom with cutting-edge technology to deliver
                 consistent returns while preserving our planet for future generations.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
                 <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircleIcon className="text-primary-500" />
-                  <span className="font-medium">Government Certified</span>
+                  <CheckCircleIcon className="text-primary-500 text-lg sm:text-xl" />
+                  <span className="font-medium text-sm sm:text-base">Government Certified</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircleIcon className="text-primary-500" />
-                  <span className="font-medium">ISO 9001:2015</span>
+                  <CheckCircleIcon className="text-primary-500 text-lg sm:text-xl" />
+                  <span className="font-medium text-sm sm:text-base">ISO 9001:2015</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-700">
-                  <CheckCircleIcon className="text-primary-500" />
-                  <span className="font-medium">NABARD Partner</span>
+                  <CheckCircleIcon className="text-primary-500 text-lg sm:text-xl" />
+                  <span className="font-medium text-sm sm:text-base">NABARD Partner</span>
                 </div>
               </div>
             </motion.div>
@@ -319,7 +319,7 @@ const About = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" ref={missionRef}>
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white px-4" ref={missionRef}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -331,27 +331,27 @@ const About = () => {
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               What Drives Us
             </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
               Our <span className="gradient-text">Mission</span> & <span className="gradient-text">Vision</span>
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={missionInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="group"
             >
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-8 text-white h-full relative overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white h-full relative overflow-hidden hover:shadow-2xl transition-shadow duration-300">
                 {/* Decorative glow */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
+                <div className="hidden sm:block absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
 
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
                   <EmojiEventsIcon fontSize="large" />
                 </div>
-                <h3 className="text-2xl font-display font-bold mb-4">Our Mission</h3>
-                <p className="text-blue-100 leading-relaxed text-lg">
+                <h3 className="text-xl sm:text-2xl font-display font-bold mb-3 sm:mb-4">Our Mission</h3>
+                <p className="text-blue-100 leading-relaxed text-base sm:text-lg">
                   To revolutionize agriculture through technology and provide sustainable farming
                   solutions that benefit investors, farmers, and the environment alike. We strive
                   to create a world where agricultural investment is accessible, transparent, and
@@ -366,15 +366,15 @@ const About = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="group"
             >
-              <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 text-white h-full relative overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+              <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white h-full relative overflow-hidden hover:shadow-2xl transition-shadow duration-300">
                 {/* Decorative glow */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
+                <div className="hidden sm:block absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all"></div>
 
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
                   <GroupsIcon fontSize="large" />
                 </div>
-                <h3 className="text-2xl font-display font-bold mb-4">Our Vision</h3>
-                <p className="text-green-100 leading-relaxed text-lg">
+                <h3 className="text-xl sm:text-2xl font-display font-bold mb-3 sm:mb-4">Our Vision</h3>
+                <p className="text-green-100 leading-relaxed text-base sm:text-lg">
                   To become the most trusted partner in agricultural investments and farming services
                   globally. We envision a future where sustainable agriculture thrives, communities
                   prosper, and investors enjoy the fruits of responsible farming.
@@ -386,7 +386,7 @@ const About = () => {
       </section>
 
       {/* Values */}
-      <section className="py-20 bg-white" ref={valuesRef}>
+      <section className="py-12 sm:py-16 md:py-20 bg-white px-4" ref={valuesRef}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -398,15 +398,15 @@ const About = () => {
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               What We Stand For
             </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
               Our Core <span className="gradient-text">Values</span>
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-base sm:text-lg">
               The principles that guide everything we do at AgroTech Solutions.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={index}
@@ -415,15 +415,15 @@ const About = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group"
               >
-                <div className={`bg-gradient-to-br ${value.bgGradient} rounded-3xl p-8 text-center h-full border border-gray-100 hover:shadow-xl transition-all duration-300 relative overflow-hidden`}>
+                <div className={`bg-gradient-to-br ${value.bgGradient} rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center h-full border border-gray-100 hover:shadow-xl transition-all duration-300 relative overflow-hidden`}>
                   {/* Decorative glow on hover */}
-                  <div className={`absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br ${value.gradient} opacity-0 rounded-full blur-2xl group-hover:opacity-20 transition-opacity`}></div>
+                  <div className={`hidden sm:block absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br ${value.gradient} opacity-0 rounded-full blur-2xl group-hover:opacity-20 transition-opacity`}></div>
 
-                  <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${value.gradient} flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                  <div className={`w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-xl sm:rounded-2xl bg-gradient-to-br ${value.gradient} flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     {value.icon}
                   </div>
-                  <h4 className="text-xl font-display font-bold text-gray-900 mb-3">{value.title}</h4>
-                  <p className="text-gray-600">{value.description}</p>
+                  <h4 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-2 sm:mb-3">{value.title}</h4>
+                  <p className="text-gray-600 text-sm sm:text-base">{value.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -432,7 +432,7 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white" ref={teamRef}>
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white px-4" ref={teamRef}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -452,7 +452,7 @@ const About = () => {
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {teamLoading ? (
               // Loading skeleton
               Array.from({ length: 4 }).map((_, index) => (
@@ -486,7 +486,7 @@ const About = () => {
                       <img
                         src={member.image}
                         alt={member.name}
-                        className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-56 sm:h-64 md:h-72 object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       {/* Gradient overlay on hover */}
                       <div className={`absolute inset-0 bg-gradient-to-t ${member.gradient} opacity-0 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-5`}>
@@ -522,7 +522,7 @@ const About = () => {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-white" ref={timelineRef}>
+      <section className="py-12 sm:py-16 md:py-20 bg-white px-4" ref={timelineRef}>
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -544,8 +544,8 @@ const About = () => {
 
           <div className="max-w-5xl mx-auto">
             <div className="relative">
-              {/* Timeline Line - Gradient */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-green-500 via-amber-500 via-purple-500 to-rose-500 rounded-full hidden md:block"></div>
+              {/* Timeline Line - Gradient - Hidden on mobile */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 via-green-500 via-amber-500 via-purple-500 to-rose-500 rounded-full hidden lg:block"></div>
 
               {timeline.map((item, index) => (
                 <motion.div
@@ -553,21 +553,20 @@ const About = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={timelineInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`relative flex items-center mb-12 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                    }`}
+                  className="relative flex items-center mb-8 sm:mb-12"
                 >
-                  <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
-                    <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
-                      <span className={`inline-block bg-gradient-to-r ${item.color} text-white px-4 py-1.5 rounded-full text-sm font-bold mb-3 shadow-md`}>
+                  <div className="w-full">
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                      <span className={`inline-block bg-gradient-to-r ${item.color} text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold mb-2 sm:mb-3 shadow-md`}>
                         {item.year}
                       </span>
-                      <h4 className="text-xl font-display font-bold text-gray-900 mb-2">{item.title}</h4>
-                      <p className="text-gray-600">{item.description}</p>
+                      <h4 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-2">{item.title}</h4>
+                      <p className="text-gray-600 text-sm sm:text-base">{item.description}</p>
                     </div>
                   </div>
 
-                  {/* Timeline Dot - Colored */}
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 w-5 h-5 bg-gradient-to-br ${item.color} rounded-full border-4 border-white shadow-lg hidden md:block`}></div>
+                  {/* Timeline Dot - Colored - Hidden on mobile */}
+                  <div className={`hidden lg:block absolute left-1/2 transform -translate-x-1/2 w-5 h-5 bg-gradient-to-br ${item.color} rounded-full border-4 border-white shadow-lg`}></div>
                 </motion.div>
               ))}
             </div>
@@ -576,37 +575,37 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="py-12 sm:py-16 md:py-20 px-4">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-green-500 rounded-3xl p-10 md:p-16 text-white text-center relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="bg-gradient-to-r from-primary-600 via-primary-500 to-green-500 rounded-2xl sm:rounded-3xl p-8 sm:p-10 md:p-16 text-white text-center relative overflow-hidden">
+              {/* Decorative elements - hidden on mobile */}
+              <div className="hidden sm:block absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="hidden sm:block absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
 
               <div className="relative">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-4 sm:mb-6">
                   Ready to Start Your Investment Journey?
                 </h2>
-                <p className="text-primary-100 text-lg max-w-2xl mx-auto mb-10">
+                <p className="text-primary-100 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-10">
                   Join thousands of investors who trust AgroTech Solutions for sustainable
                   agricultural investments. Start with as little as ₹30,000.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <Link
                     to="/services"
-                    className="inline-flex items-center justify-center gap-2 bg-white text-primary-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-primary-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl"
                   >
                     Explore Services
                     <ArrowForwardIcon />
                   </Link>
                   <Link
                     to="/contact"
-                    className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
+                    className="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold hover:bg-white/30 transition-all border border-white/30"
                   >
                     Contact Us
                   </Link>

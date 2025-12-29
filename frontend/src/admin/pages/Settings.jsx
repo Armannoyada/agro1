@@ -4,7 +4,7 @@ import {
   Tabs, Tab, IconButton, Avatar, List, ListItem, ListItemText, ListItemSecondaryAction,
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
 } from '@mui/material';
-import { Save, Add, Delete, Business, Assessment, Image } from '@mui/icons-material';
+import { Save, Add, Delete, Edit, Business, Assessment, Image } from '@mui/icons-material';
 import { getCompanyInfo, updateCompanyInfo, getStatistics, createStatistic, updateStatistic, deleteStatistic } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -24,6 +24,8 @@ const Settings = () => {
   const [statistics, setStatistics] = useState([]);
   const [newStat, setNewStat] = useState({ label: '', value: '', suffix: '', icon: '' });
   const [deleteConfirm, setDeleteConfirm] = useState({ open: false, id: null, label: '' });
+  const [editDialog, setEditDialog] = useState({ open: false, stat: null });
+  const [editFormData, setEditFormData] = useState({ label: '', value: '', suffix: '', icon: '' });
 
   useEffect(() => { fetchData(); }, []);
 
@@ -74,6 +76,50 @@ const Settings = () => {
     }
   };
 
+  // Edit handlers
+  const handleEditClick = (stat) => {
+    setEditFormData({
+      label: stat.label || '',
+      value: stat.value || '',
+      suffix: stat.suffix || '',
+      icon: stat.icon || '',
+    });
+    setEditDialog({ open: true, stat });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async () => {
+    if (!editFormData.label || !editFormData.value) {
+      toast.error('Label and value are required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await updateStatistic(editDialog.stat.id, editFormData);
+      if (response.success) {
+        setStatistics((prev) =>
+          prev.map((s) => (s.id === editDialog.stat.id ? { ...s, ...editFormData } : s))
+        );
+        setEditDialog({ open: false, stat: null });
+        toast.success('Statistic updated successfully');
+      }
+    } catch (error) {
+      toast.error('Failed to update statistic');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditDialog({ open: false, stat: null });
+  };
+
+  // Delete handlers
   const handleDeleteClick = (id, label) => {
     setDeleteConfirm({ open: true, id, label });
   };
@@ -97,20 +143,6 @@ const Settings = () => {
 
   const handleDeleteCancel = () => {
     setDeleteConfirm({ open: false, id: null, label: '' });
-  };
-
-  const handleSaveStatistics = async () => {
-    setLoading(true);
-    try {
-      for (const stat of statistics) {
-        await updateStatistic(stat.id, stat);
-      }
-      toast.success('Statistics updated successfully');
-    } catch (error) {
-      toast.error('Failed to update statistics');
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -162,24 +194,38 @@ const Settings = () => {
 
             <TabPanel value={tabValue} index={1}>
               <Typography variant="h6" fontWeight={600} gutterBottom>Website Statistics</Typography>
-              <Typography color="text.secondary" sx={{ mb: 3 }}>These numbers are displayed on the homepage</Typography>
+              <Typography color="text.secondary" sx={{ mb: 3 }}>These numbers are displayed on the homepage. Click the edit icon to modify existing statistics.</Typography>
               <Grid container spacing={2} sx={{ mb: 3 }}>
-                <Grid item xs={12} md={3}><TextField fullWidth label="Label" value={newStat.label} onChange={(e) => setNewStat((prev) => ({ ...prev, label: e.target.value }))} size="small" /></Grid>
-                <Grid item xs={12} md={3}><TextField fullWidth label="Value" value={newStat.value} onChange={(e) => setNewStat((prev) => ({ ...prev, value: e.target.value }))} size="small" /></Grid>
-                <Grid item xs={12} md={2}><TextField fullWidth label="Suffix" value={newStat.suffix} onChange={(e) => setNewStat((prev) => ({ ...prev, suffix: e.target.value }))} size="small" /></Grid>
-                <Grid item xs={12} md={2}><TextField fullWidth label="Icon" value={newStat.icon} onChange={(e) => setNewStat((prev) => ({ ...prev, icon: e.target.value }))} size="small" /></Grid>
+                <Grid item xs={12} md={3}><TextField fullWidth label="Label" value={newStat.label} onChange={(e) => setNewStat((prev) => ({ ...prev, label: e.target.value }))} size="small" placeholder="e.g. Happy Farmers" /></Grid>
+                <Grid item xs={12} md={3}><TextField fullWidth label="Value" value={newStat.value} onChange={(e) => setNewStat((prev) => ({ ...prev, value: e.target.value }))} size="small" placeholder="e.g. 5000" /></Grid>
+                <Grid item xs={12} md={2}><TextField fullWidth label="Suffix" value={newStat.suffix} onChange={(e) => setNewStat((prev) => ({ ...prev, suffix: e.target.value }))} size="small" placeholder="e.g. +" /></Grid>
+                <Grid item xs={12} md={2}><TextField fullWidth label="Icon" value={newStat.icon} onChange={(e) => setNewStat((prev) => ({ ...prev, icon: e.target.value }))} size="small" placeholder="e.g. users" /></Grid>
                 <Grid item xs={12} md={2}><Button variant="outlined" startIcon={<Add />} onClick={handleAddStat} fullWidth sx={{ height: '100%' }}>Add</Button></Grid>
               </Grid>
               <List>
                 {statistics.map((stat, index) => (
-                  <ListItem key={stat.id || index} divider>
+                  <ListItem key={stat.id || index} divider sx={{ py: 2 }}>
                     <Avatar sx={{ mr: 2, bgcolor: 'primary.light' }}>{stat.icon || stat.label?.charAt(0)}</Avatar>
-                    <ListItemText primary={stat.label} secondary={`${stat.value}${stat.suffix || ''}`} />
-                    <ListItemSecondaryAction><IconButton color="error" onClick={() => handleDeleteClick(stat.id, stat.label)}><Delete /></IconButton></ListItemSecondaryAction>
+                    <ListItemText
+                      primary={<Typography fontWeight={600}>{stat.label}</Typography>}
+                      secondary={`${stat.value}${stat.suffix || ''}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton color="primary" onClick={() => handleEditClick(stat)} sx={{ mr: 1 }}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton color="error" onClick={() => handleDeleteClick(stat.id, stat.label)}>
+                        <Delete />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
-              <Button variant="contained" startIcon={<Save />} onClick={handleSaveStatistics} disabled={loading} sx={{ mt: 3 }}>{loading ? 'Saving...' : 'Save Statistics'}</Button>
+              {statistics.length === 0 && (
+                <Typography color="text.secondary" textAlign="center" sx={{ py: 4 }}>
+                  No statistics added yet. Add your first statistic above.
+                </Typography>
+              )}
             </TabPanel>
 
             <TabPanel value={tabValue} index={2}>
@@ -208,6 +254,64 @@ const Settings = () => {
           </CardContent>
         </Card>
       </Box>
+
+      {/* Edit Statistic Dialog */}
+      <Dialog open={editDialog.open} onClose={handleEditCancel} maxWidth="sm" fullWidth>
+        <DialogTitle>Edit Statistic</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Label"
+                name="label"
+                value={editFormData.label}
+                onChange={handleEditChange}
+                required
+                placeholder="e.g. Happy Farmers"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Value"
+                name="value"
+                value={editFormData.value}
+                onChange={handleEditChange}
+                required
+                placeholder="e.g. 5000"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Suffix"
+                name="suffix"
+                value={editFormData.suffix}
+                onChange={handleEditChange}
+                placeholder="e.g. + or %"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Icon"
+                name="icon"
+                value={editFormData.icon}
+                onChange={handleEditChange}
+                placeholder="e.g. users, landscape, calendar"
+                helperText="Icon name for display (optional)"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditCancel}>Cancel</Button>
+          <Button onClick={handleEditSave} variant="contained" disabled={loading}>
+            {loading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirm.open} onClose={handleDeleteCancel}>

@@ -18,6 +18,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import ArticleIcon from '@mui/icons-material/Article';
+import EmailIcon from '@mui/icons-material/Email';
 
 const drawerWidth = 260;
 
@@ -28,6 +29,7 @@ const menuItems = [
   { text: 'Blogs', icon: <ArticleIcon />, path: '/admin/blogs' },
   { text: 'Inquiries', icon: <QuestionAnswerIcon />, path: '/admin/inquiries' },
   { text: 'Contacts', icon: <ContactMailIcon />, path: '/admin/contacts' },
+  { text: 'Newsletter', icon: <EmailIcon />, path: '/admin/newsletter' },
   { text: 'Testimonials', icon: <FormatQuoteIcon />, path: '/admin/testimonials' },
   { text: 'Team', icon: <GroupIcon />, path: '/admin/team' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },

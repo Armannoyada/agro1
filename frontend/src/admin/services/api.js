@@ -208,5 +208,15 @@ export const uploadVideo = async (file) => {
   return response.data;
 };
 
+// Image Upload API (max 5MB) - supports testimonials, team, general
+export const uploadImage = async (file, type = 'general') => {
+  const formData = new FormData();
+  formData.append('image', file);
+  const response = await api.post(`/upload-image.php?type=${type}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
 export default api;
 
