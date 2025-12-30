@@ -100,20 +100,20 @@ const WhyChooseUs = () => {
           transition={{ duration: 0.5 }}
           className="mb-8 md:mb-10"
         >
-          <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-xl">
-            <div className="grid grid-cols-3 gap-4 md:gap-6 max-w-3xl mx-auto">
+          <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-10 max-w-3xl mx-auto">
               {badges.map((badge, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={inView ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="flex items-center justify-center gap-2 md:gap-3 group"
+                  className="flex items-center gap-3 group w-44 sm:w-auto"
                 >
-                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br ${badge.color} flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform flex-shrink-0`}>
+                  <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${badge.color} flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform flex-shrink-0`}>
                     {badge.icon}
                   </div>
-                  <span className="text-white font-semibold text-xs md:text-base">{badge.title}</span>
+                  <span className="text-white font-semibold text-sm sm:text-base whitespace-nowrap">{badge.title}</span>
                 </motion.div>
               ))}
             </div>

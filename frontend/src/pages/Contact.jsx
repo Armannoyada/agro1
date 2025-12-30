@@ -109,7 +109,7 @@ const Contact = () => {
   return (
     <div className="bg-white">
       {/* Hero Section - Full Width Image */}
-      <section className="relative min-h-[450px] md:min-h-[500px] pb-20" ref={heroRef}>
+      <section className="relative min-h-[380px] sm:min-h-[420px] md:min-h-[500px] pb-16 sm:pb-20 px-4" ref={heroRef}>
         <img
           src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1600&q=80"
           alt="Contact Us"
@@ -117,27 +117,27 @@ const Contact = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30"></div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Floating decorative elements - hidden on mobile */}
+        <div className="hidden sm:block absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="hidden sm:block absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-        <div className="relative flex items-center justify-center min-h-[350px]">
+        <div className="relative flex items-center justify-center min-h-[280px] sm:min-h-[320px] md:min-h-[350px]">
           <div className="container-custom text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={heroInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                 <span className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"></span>
                 We're Here to Help
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 sm:mb-6">
                 Get in <span className="text-primary-400">Touch</span>
               </h1>
 
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
+              <p className="text-sm sm:text-base md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto px-2">
                 Have questions about our services or want to start investing?
                 We'd love to hear from you. Reach out and we'll respond within 24 hours.
               </p>
@@ -146,9 +146,9 @@ const Contact = () => {
         </div>
 
         {/* Floating Contact Cards */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10">
+        <div className="absolute bottom-0 left-0 right-0 translate-y-1/2 z-10 px-3 sm:px-4">
           <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
               {contactInfoCards.map((info, index) => (
                 <motion.div
                   key={index}
@@ -156,15 +156,15 @@ const Contact = () => {
                   animate={heroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-center h-full">
-                    <div className={`w-14 h-14 mx-auto mb-4 bg-gradient-to-br ${info.gradient} rounded-xl flex items-center justify-center text-white shadow-lg`}>
-                      {info.icon}
+                  <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-center h-full">
+                    <div className={`w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 sm:mb-4 bg-gradient-to-br ${info.gradient} rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg`}>
+                      {React.cloneElement(info.icon, { sx: { fontSize: { xs: 20, sm: 28 } } })}
                     </div>
-                    <h3 className="text-lg font-display font-bold text-gray-900 mb-2">
+                    <h3 className="text-sm sm:text-lg font-display font-bold text-gray-900 mb-1 sm:mb-2">
                       {info.title}
                     </h3>
                     {info.details.map((detail, i) => (
-                      <p key={i} className="text-gray-600 text-sm">{detail}</p>
+                      <p key={i} className="text-gray-600 text-xs sm:text-sm truncate">{detail}</p>
                     ))}
                   </div>
                 </motion.div>
@@ -175,30 +175,30 @@ const Contact = () => {
       </section>
 
       {/* Spacer for floating cards */}
-      <div className="h-28 md:h-32 bg-white"></div>
+      <div className="h-32 sm:h-36 md:h-32 bg-white"></div>
 
       {/* Contact Form & Map */}
-      <section className="py-16 md:py-20 bg-gradient-to-b from-white to-gray-50" ref={ref}>
+      <section className="py-10 sm:py-14 md:py-20 bg-gradient-to-b from-white to-gray-50 px-4" ref={ref}>
         <div className="container-custom">
           {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-12"
           >
-            <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 bg-primary-100 text-primary-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
               <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
               Contact Form
             </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3 sm:mb-4">
               Send Us a <span className="gradient-text">Message</span>
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
               Fill out the form below and our team will get back to you within 24 hours.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-5 gap-12">
+          <div className="grid lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-12">
             {/* Contact Form - Takes more space */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -206,11 +206,11 @@ const Contact = () => {
               transition={{ duration: 0.6 }}
               className="lg:col-span-3"
             >
-              <div className="bg-white rounded-3xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-5 sm:p-8 md:p-10 border border-gray-100">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Your Name *
                       </label>
                       <input
@@ -219,12 +219,12 @@ const Contact = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 text-sm sm:text-base"
                         placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Email Address *
                       </label>
                       <input
@@ -233,15 +233,15 @@ const Contact = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 text-sm sm:text-base"
                         placeholder="john@example.com"
                       />
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Phone Number *
                       </label>
                       <input
@@ -250,12 +250,12 @@ const Contact = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 text-sm sm:text-base"
                         placeholder="+91 9876543210"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                         Subject
                       </label>
                       <input
@@ -263,14 +263,14 @@ const Contact = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 text-sm sm:text-base"
                         placeholder="How can we help?"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                       Your Message *
                     </label>
                     <textarea
@@ -278,8 +278,8 @@ const Contact = () => {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={5}
-                      className="w-full px-4 py-3.5 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 resize-none"
+                      rows={4}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-gray-900 resize-none text-sm sm:text-base"
                       placeholder="Tell us more about your inquiry..."
                     />
                   </div>
@@ -287,17 +287,17 @@ const Contact = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-gradient-to-r from-primary-500 to-green-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="w-full py-3 sm:py-4 bg-gradient-to-r from-primary-500 to-green-500 text-white rounded-lg sm:rounded-xl font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 text-sm sm:text-base"
                   >
                     {loading ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         Sending...
                       </>
                     ) : (
                       <>
                         Send Message
-                        <SendIcon fontSize="small" />
+                        <SendIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                       </>
                     )}
                   </button>
@@ -310,10 +310,10 @@ const Contact = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-2 space-y-6"
+              className="lg:col-span-2 space-y-4 sm:space-y-6"
             >
               {/* Map */}
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden h-64 border border-gray-100">
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden h-48 sm:h-64 border border-gray-100">
                 {contactInfo?.mapEmbed ? (
                   <div dangerouslySetInnerHTML={{ __html: contactInfo.mapEmbed }} className="w-full h-full" />
                 ) : (
@@ -331,55 +331,55 @@ const Contact = () => {
               </div>
 
               {/* Quick Contact Card */}
-              <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-green-500 rounded-3xl p-8 text-white relative overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+              <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-green-500 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white relative overflow-hidden">
+                {/* Decorative elements - hidden on mobile */}
+                <div className="hidden sm:block absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                <div className="hidden sm:block absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
 
                 <div className="relative">
-                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                    <WhatsAppIcon sx={{ fontSize: 28 }} />
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4">
+                    <WhatsAppIcon sx={{ fontSize: { xs: 20, sm: 28 } }} />
                   </div>
-                  <h3 className="text-xl font-display font-bold mb-3">
+                  <h3 className="text-lg sm:text-xl font-display font-bold mb-2 sm:mb-3">
                     Need Quick Assistance?
                   </h3>
-                  <p className="text-primary-100 mb-6 text-sm">
+                  <p className="text-primary-100 mb-4 sm:mb-6 text-xs sm:text-sm">
                     Connect with us directly on WhatsApp for instant support.
                   </p>
                   <a
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white text-primary-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+                    className="inline-flex items-center gap-2 bg-white text-primary-700 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors shadow-lg text-sm sm:text-base"
                   >
-                    <WhatsAppIcon />
+                    <WhatsAppIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                     Chat on WhatsApp
                   </a>
                 </div>
               </div>
 
               {/* FAQ Teaser */}
-              <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-white">
-                    <QuestionAnswerIcon sx={{ fontSize: 20 }} />
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg sm:rounded-xl flex items-center justify-center text-white">
+                    <QuestionAnswerIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
                   </div>
-                  <h3 className="text-lg font-display font-bold text-gray-900">
+                  <h3 className="text-base sm:text-lg font-display font-bold text-gray-900">
                     Quick FAQs
                   </h3>
                 </div>
-                <div className="space-y-3">
-                  <div className="p-3 bg-gray-50 rounded-xl">
-                    <p className="text-sm font-semibold text-gray-900">What is the minimum investment?</p>
-                    <p className="text-sm text-gray-600">Starts from ₹30,000 depending on the service.</p>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900">What is the minimum investment?</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Starts from ₹30,000 depending on the service.</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-xl">
-                    <p className="text-sm font-semibold text-gray-900">How are returns distributed?</p>
-                    <p className="text-sm text-gray-600">Monthly payouts directly to your bank account.</p>
+                  <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900">How are returns distributed?</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Monthly payouts directly to your bank account.</p>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-xl">
-                    <p className="text-sm font-semibold text-gray-900">Is my investment secure?</p>
-                    <p className="text-sm text-gray-600">100% secured with legal agreements and insurance.</p>
+                  <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900">Is my investment secure?</p>
+                    <p className="text-xs sm:text-sm text-gray-600">100% secured with legal agreements and insurance.</p>
                   </div>
                 </div>
               </div>
@@ -389,42 +389,42 @@ const Contact = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-10 sm:py-14 md:py-16 px-4">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-10 md:p-14 text-white relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 w-40 h-40 bg-primary-500/20 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 right-0 w-60 h-60 bg-green-500/20 rounded-full blur-3xl"></div>
+            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 text-white relative overflow-hidden">
+              {/* Decorative elements - hidden on mobile */}
+              <div className="hidden sm:block absolute top-0 left-0 w-40 h-40 bg-primary-500/20 rounded-full blur-3xl"></div>
+              <div className="hidden sm:block absolute bottom-0 right-0 w-60 h-60 bg-green-500/20 rounded-full blur-3xl"></div>
 
-              <div className="relative grid md:grid-cols-3 gap-8 items-center">
-                <div className="md:col-span-2">
-                  <h2 className="text-2xl md:text-3xl font-display font-bold mb-4">
+              <div className="relative grid md:grid-cols-3 gap-6 sm:gap-8 items-center">
+                <div className="md:col-span-2 text-center md:text-left">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-3 sm:mb-4">
                     Prefer to Talk? Our Team is Ready!
                   </h2>
-                  <p className="text-gray-400 text-lg">
+                  <p className="text-gray-400 text-sm sm:text-base md:text-lg">
                     Call us directly or schedule a callback. We're available Mon-Sat, 9 AM - 6 PM.
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row md:flex-col gap-4">
+                <div className="flex flex-col sm:flex-row md:flex-col gap-3 sm:gap-4">
                   <a
                     href={`tel:${contactInfo?.phone || '+919876543210'}`}
-                    className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-green-500 text-white px-6 py-4 rounded-xl font-semibold hover:shadow-lg transition-all"
+                    className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary-500 to-green-500 text-white px-5 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:shadow-lg transition-all text-sm sm:text-base"
                   >
-                    <HeadsetMicIcon />
+                    <HeadsetMicIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                     Call Now
                   </a>
                   <a
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-6 py-4 rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20"
+                    className="inline-flex items-center justify-center gap-2 bg-white/10 text-white px-5 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:bg-white/20 transition-all border border-white/20 text-sm sm:text-base"
                   >
-                    <SupportAgentIcon />
+                    <SupportAgentIcon sx={{ fontSize: { xs: 18, sm: 24 } }} />
                     Request Callback
                   </a>
                 </div>

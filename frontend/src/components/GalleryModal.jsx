@@ -63,18 +63,18 @@ const GalleryModal = ({ images, isOpen, onClose, initialIndex = 0 }) => {
                     />
 
                     {/* Modal Content */}
-                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4 md:p-8">
+                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-2 sm:p-4 md:p-8">
                         {/* Close Button */}
                         <button
                             onClick={onClose}
-                            className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                            className="absolute top-2 sm:top-4 right-2 sm:right-4 z-20 p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                             aria-label="Close gallery"
                         >
-                            <CloseIcon fontSize="large" />
+                            <CloseIcon sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }} />
                         </button>
 
                         {/* Image Counter */}
-                        <div className="absolute top-4 left-4 text-white text-sm font-medium bg-black/30 px-3 py-1 rounded-full">
+                        <div className="absolute top-2 sm:top-4 left-2 sm:left-4 text-white text-xs sm:text-sm font-medium bg-black/30 px-2 sm:px-3 py-1 rounded-full">
                             {currentIndex + 1} / {images.length}
                         </div>
 
@@ -84,12 +84,12 @@ const GalleryModal = ({ images, isOpen, onClose, initialIndex = 0 }) => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.2 }}
-                            className="max-w-5xl max-h-[70vh] w-full flex items-center justify-center"
+                            className="max-w-5xl max-h-[60vh] sm:max-h-[70vh] w-full flex items-center justify-center mt-10 sm:mt-0"
                         >
                             <img
                                 src={images[currentIndex]}
                                 alt={`Gallery image ${currentIndex + 1}`}
-                                className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                                className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg shadow-2xl"
                             />
                         </motion.div>
 
@@ -98,31 +98,31 @@ const GalleryModal = ({ images, isOpen, onClose, initialIndex = 0 }) => {
                             <>
                                 <button
                                     onClick={goToPrevious}
-                                    className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                    className="absolute left-1 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                                     aria-label="Previous image"
                                 >
-                                    <ChevronLeftIcon fontSize="large" />
+                                    <ChevronLeftIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
                                 </button>
                                 <button
                                     onClick={goToNext}
-                                    className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                    className="absolute right-1 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
                                     aria-label="Next image"
                                 >
-                                    <ChevronRightIcon fontSize="large" />
+                                    <ChevronRightIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
                                 </button>
                             </>
                         )}
 
                         {/* Thumbnail Strip */}
                         {images.length > 1 && (
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-black/30 rounded-xl overflow-x-auto max-w-[90vw]">
+                            <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-black/30 rounded-lg sm:rounded-xl overflow-x-auto max-w-[94vw] sm:max-w-[90vw]">
                                 {images.map((img, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setCurrentIndex(index)}
-                                        className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all ${index === currentIndex
-                                                ? 'border-primary-500 scale-105'
-                                                : 'border-transparent opacity-60 hover:opacity-100'
+                                        className={`flex-shrink-0 w-12 h-9 sm:w-16 sm:h-12 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all ${index === currentIndex
+                                            ? 'border-primary-500 scale-105'
+                                            : 'border-transparent opacity-60 hover:opacity-100'
                                             }`}
                                     >
                                         <img

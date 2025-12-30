@@ -269,12 +269,12 @@ const ServiceDetail = () => {
     <div className="bg-white">
       {/* Investment Modal */}
       {showInvestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowInvestModal(false)}></div>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 z-10"
+            className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6 z-10"
           >
             <button
               onClick={() => setShowInvestModal(false)}
@@ -283,10 +283,10 @@ const ServiceDetail = () => {
               <CloseIcon />
             </button>
 
-            <h3 className="text-2xl font-display font-bold text-gray-900 mb-2">
+            <h3 className="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-2">
               Invest Now
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Submit your interest for <span className="font-semibold text-primary-600">{service.title}</span>
             </p>
 
@@ -306,7 +306,7 @@ const ServiceDetail = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-sm sm:text-base"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -321,7 +321,7 @@ const ServiceDetail = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-sm sm:text-base"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -336,7 +336,7 @@ const ServiceDetail = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-sm sm:text-base"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -352,7 +352,7 @@ const ServiceDetail = () => {
                       name="investment_amount"
                       value={formData.investment_amount}
                       onChange={handleInputChange}
-                      className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all"
+                      className="w-full pl-8 pr-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all text-sm sm:text-base"
                       placeholder="Enter amount"
                       min="0"
                     />
@@ -366,7 +366,7 @@ const ServiceDetail = () => {
               <button
                 type="submit"
                 disabled={formLoading}
-                className="w-full mt-6 bg-primary-500 text-white py-3 rounded-xl font-semibold hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full mt-4 sm:mt-6 bg-primary-500 text-white py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 {formLoading ? 'Submitting...' : 'Submit Application'}
                 {!formLoading && <ArrowForwardIcon fontSize="small" />}
@@ -377,7 +377,7 @@ const ServiceDetail = () => {
       )}
 
       {/* Hero Cover Section */}
-      <section className="relative h-[60vh] min-h-[500px] overflow-hidden">
+      <section className="relative h-[45vh] sm:h-[50vh] md:h-[60vh] min-h-[320px] sm:min-h-[400px] md:min-h-[500px] overflow-hidden">
         <img
           src={service.header_image || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80'}
           alt={service.title}
@@ -386,20 +386,20 @@ const ServiceDetail = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
 
         <div className="absolute inset-0 flex items-end">
-          <div className="container-custom pb-12">
+          <div className="container-custom pb-6 sm:pb-8 md:pb-12 px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4">
                 {getCategoryIcon(service.category)}
                 {getCategoryName(service.category)}
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-2 sm:mb-4">
                 {service.title}
               </h1>
-              <p className="text-lg md:text-xl text-white/90 max-w-3xl">
+              <p className="text-sm sm:text-base md:text-xl text-white/90 max-w-3xl">
                 Invest in {getCategoryName(service.category).toLowerCase()} with expected returns of {formatROI(service.roi_min, service.roi_max)}
               </p>
             </motion.div>
@@ -408,35 +408,35 @@ const ServiceDetail = () => {
       </section>
 
       {/* Quick Stats Bar */}
-      <section className="bg-primary-600 py-6">
+      <section className="bg-primary-600 py-4 sm:py-6 px-4">
         <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
-            <div className="flex flex-col items-center gap-2">
-              <TrendingUpIcon fontSize="large" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center text-white">
+            <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-0">
+              <TrendingUpIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
               <div>
-                <p className="text-2xl font-bold">{formatROI(service.roi_min, service.roi_max)}</p>
-                <p className="text-sm text-primary-100">Expected ROI</p>
+                <p className="text-lg sm:text-2xl font-bold">{formatROI(service.roi_min, service.roi_max)}</p>
+                <p className="text-xs sm:text-sm text-primary-100">Expected ROI</p>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <MonetizationOnIcon fontSize="large" />
+            <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-0">
+              <MonetizationOnIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
               <div>
-                <p className="text-2xl font-bold">{formatInvestment(service.min_investment)}</p>
-                <p className="text-sm text-primary-100">Min Investment</p>
+                <p className="text-lg sm:text-2xl font-bold">{formatInvestment(service.min_investment)}</p>
+                <p className="text-xs sm:text-sm text-primary-100">Min Investment</p>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <AccessTimeIcon fontSize="large" />
+            <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-0">
+              <AccessTimeIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
               <div>
-                <p className="text-2xl font-bold">{formatDuration(service.duration_months)}</p>
-                <p className="text-sm text-primary-100">Duration</p>
+                <p className="text-lg sm:text-2xl font-bold">{formatDuration(service.duration_months)}</p>
+                <p className="text-xs sm:text-sm text-primary-100">Duration</p>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <VerifiedIcon fontSize="large" />
+            <div className="flex flex-col items-center gap-1 sm:gap-2 p-2 sm:p-0">
+              <VerifiedIcon sx={{ fontSize: { xs: 24, sm: 32 } }} />
               <div>
-                <p className="text-2xl font-bold">100%</p>
-                <p className="text-sm text-primary-100">Secure</p>
+                <p className="text-lg sm:text-2xl font-bold">100%</p>
+                <p className="text-xs sm:text-sm text-primary-100">Secure</p>
               </div>
             </div>
           </div>
@@ -444,33 +444,33 @@ const ServiceDetail = () => {
       </section>
 
       {/* Trust Badges Section */}
-      <section className="bg-gray-50 py-4 border-b">
+      <section className="bg-gray-50 py-3 sm:py-4 border-b px-4 overflow-x-auto">
         <div className="container-custom">
-          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
-            <div className="flex items-center gap-2 text-gray-600">
-              <VerifiedIcon className="text-primary-500" fontSize="small" />
-              <span className="text-sm font-medium">Verified Agricultural Investment</span>
+          <div className="flex justify-start sm:justify-center items-center gap-4 sm:gap-6 md:gap-10 min-w-max sm:min-w-0 sm:flex-wrap">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <VerifiedIcon className="text-primary-500" sx={{ fontSize: { xs: 16, sm: 20 } }} />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Verified Investment</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <CheckCircleIcon className="text-green-500" fontSize="small" />
-              <span className="text-sm font-medium">Government Compliance</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <CheckCircleIcon className="text-green-500" sx={{ fontSize: { xs: 16, sm: 20 } }} />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Govt. Compliance</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <TrendingUpIcon className="text-primary-500" fontSize="small" />
-              <span className="text-sm font-medium">Transparent Returns</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <TrendingUpIcon className="text-primary-500" sx={{ fontSize: { xs: 16, sm: 20 } }} />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Transparent Returns</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <AgricultureIcon className="text-green-600" fontSize="small" />
-              <span className="text-sm font-medium">Professional Farm Management</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <AgricultureIcon className="text-green-600" sx={{ fontSize: { xs: 16, sm: 20 } }} />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">Pro Farm Management</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="section-padding" ref={ref}>
+      <section className="py-8 sm:py-12 md:py-16 lg:py-24 px-4 md:px-8" ref={ref}>
         <div className="container-custom">
-          <div className="grid lg:grid-cols-3 gap-12">
+          <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
             {/* Left Content */}
             <div className="lg:col-span-2">
               {/* Description */}
@@ -478,13 +478,13 @@ const ServiceDetail = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5 }}
-                className="mb-12"
+                className="mb-8 sm:mb-12"
               >
-                <h2 className="text-2xl font-display font-bold text-gray-900 mb-6">
+                <h2 className="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-4 sm:mb-6">
                   About This Investment
                 </h2>
                 <div
-                  className="prose prose-lg max-w-none text-gray-600"
+                  className="prose prose-sm sm:prose-lg max-w-none text-gray-600"
                   dangerouslySetInnerHTML={{ __html: service.description || '<p>Detailed information about this investment opportunity will be available soon.</p>' }}
                 />
               </motion.div>
@@ -495,15 +495,15 @@ const ServiceDetail = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="mb-12"
+                  className="mb-8 sm:mb-12"
                 >
-                  <h2 className="text-2xl font-display font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <CollectionsIcon className="text-primary-500" />
+                  <h2 className="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+                    <CollectionsIcon className="text-primary-500" sx={{ fontSize: { xs: 20, sm: 24 } }} />
                     Gallery
                   </h2>
 
                   {/* 2-column grid with larger images */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-4">
                     {service.gallery_images.slice(0, 4).map((img, index) => {
                       const isLastVisible = index === 3;
                       const hasMoreImages = service.gallery_images.length > 4;
@@ -512,7 +512,7 @@ const ServiceDetail = () => {
                       return (
                         <div
                           key={index}
-                          className="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer group shadow-md hover:shadow-xl transition-shadow duration-300"
+                          className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group shadow-md hover:shadow-xl transition-shadow duration-300"
                           onClick={() => {
                             setGalleryInitialIndex(index);
                             setShowGalleryModal(true);
@@ -531,7 +531,7 @@ const ServiceDetail = () => {
                           {isLastVisible && hasMoreImages && (
                             <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/80 flex items-center justify-center">
                               <div className="text-center">
-                                <span className="text-white text-4xl md:text-5xl font-bold block">
+                                <span className="text-white text-2xl sm:text-4xl md:text-5xl font-bold block">
                                   +{remainingCount}
                                 </span>
                                 <span className="text-white/80 text-sm mt-1">more images</span>
@@ -549,7 +549,7 @@ const ServiceDetail = () => {
                       setGalleryInitialIndex(0);
                       setShowGalleryModal(true);
                     }}
-                    className="mt-5 inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors group"
+                    className="mt-3 sm:mt-5 inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold transition-colors group text-sm sm:text-base"
                   >
                     <CollectionsIcon fontSize="small" className="group-hover:scale-110 transition-transform" />
                     View All {service.gallery_images.length} Images
@@ -563,31 +563,31 @@ const ServiceDetail = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="grid md:grid-cols-2 gap-8"
+                className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8"
               >
-                <div className="bg-primary-50 rounded-2xl p-6">
-                  <h3 className="text-xl font-display font-semibold text-gray-900 mb-4">
+                <div className="bg-primary-50 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-display font-semibold text-gray-900 mb-3 sm:mb-4">
                     Key Features
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2 sm:space-y-3">
                     {defaultFeatures.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <CheckCircleIcon className="text-primary-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">{feature}</span>
+                      <li key={index} className="flex items-start gap-2 sm:gap-3">
+                        <CheckCircleIcon className="text-primary-500 flex-shrink-0 mt-0.5" sx={{ fontSize: { xs: 18, sm: 24 } }} />
+                        <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="bg-green-50 rounded-2xl p-6">
-                  <h3 className="text-xl font-display font-semibold text-gray-900 mb-4">
+                <div className="bg-green-50 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-display font-semibold text-gray-900 mb-3 sm:mb-4">
                     Investor Benefits
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2 sm:space-y-3">
                     {defaultBenefits.map((benefit, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <LocalOfferIcon className="text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">{benefit}</span>
+                      <li key={index} className="flex items-start gap-2 sm:gap-3">
+                        <LocalOfferIcon className="text-green-500 flex-shrink-0 mt-0.5" sx={{ fontSize: { xs: 18, sm: 24 } }} />
+                        <span className="text-gray-700 text-sm sm:text-base">{benefit}</span>
                       </li>
                     ))}
                   </ul>
@@ -597,47 +597,47 @@ const ServiceDetail = () => {
 
             {/* Right Sidebar */}
             <div className="lg:col-span-1">
-              <div className="sticky top-28 space-y-6">
+              <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
                 {/* Investment Card */}
                 <motion.div
                   initial={{ opacity: 0, x: 30 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5 }}
-                  className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6"
+                  className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6"
                 >
-                  <h3 className="text-xl font-display font-bold text-gray-900 mb-6">
+                  <h3 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-4 sm:mb-6">
                     Investment Details
                   </h3>
 
-                  <div className="space-y-4 mb-6">
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-gray-600">Minimum Investment</span>
-                      <span className="font-semibold text-gray-900">{formatInvestment(service.min_investment)}</span>
+                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                    <div className="flex justify-between items-center py-2 sm:py-3 border-b border-gray-100">
+                      <span className="text-gray-600 text-sm sm:text-base">Minimum Investment</span>
+                      <span className="font-semibold text-gray-900 text-sm sm:text-base">{formatInvestment(service.min_investment)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-gray-600">Maximum Investment</span>
-                      <span className="font-semibold text-gray-900">{formatInvestment(service.max_investment)}</span>
+                    <div className="flex justify-between items-center py-2 sm:py-3 border-b border-gray-100">
+                      <span className="text-gray-600 text-sm sm:text-base">Maximum Investment</span>
+                      <span className="font-semibold text-gray-900 text-sm sm:text-base">{formatInvestment(service.max_investment)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-gray-600">Expected ROI</span>
-                      <span className="font-semibold text-primary-600">{formatROI(service.roi_min, service.roi_max)}</span>
+                    <div className="flex justify-between items-center py-2 sm:py-3 border-b border-gray-100">
+                      <span className="text-gray-600 text-sm sm:text-base">Expected ROI</span>
+                      <span className="font-semibold text-primary-600 text-sm sm:text-base">{formatROI(service.roi_min, service.roi_max)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-gray-600">Duration</span>
-                      <span className="font-semibold text-gray-900">{formatDuration(service.duration_months)}</span>
+                    <div className="flex justify-between items-center py-2 sm:py-3 border-b border-gray-100">
+                      <span className="text-gray-600 text-sm sm:text-base">Duration</span>
+                      <span className="font-semibold text-gray-900 text-sm sm:text-base">{formatDuration(service.duration_months)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3">
-                      <span className="text-gray-600">Payout</span>
-                      <span className="font-semibold text-gray-900">Monthly</span>
+                    <div className="flex justify-between items-center py-2 sm:py-3">
+                      <span className="text-gray-600 text-sm sm:text-base">Payout</span>
+                      <span className="font-semibold text-gray-900 text-sm sm:text-base">Monthly</span>
                     </div>
                   </div>
 
                   <button
                     onClick={() => setShowInvestModal(true)}
-                    className="btn-primary w-full text-center flex items-center justify-center gap-2"
+                    className="btn-primary w-full text-center flex items-center justify-center gap-2 text-sm sm:text-base py-2.5 sm:py-3"
                   >
                     Invest Now
-                    <ArrowForwardIcon fontSize="small" />
+                    <ArrowForwardIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                   </button>
                 </motion.div>
 
@@ -646,16 +646,16 @@ const ServiceDetail = () => {
                   initial={{ opacity: 0, x: 30 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl p-6 text-white"
+                  className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white"
                 >
-                  <h3 className="text-lg font-display font-semibold mb-4">
+                  <h3 className="text-base sm:text-lg font-display font-semibold mb-3 sm:mb-4">
                     Performance Stats
                   </h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-4">
                     {defaultStats.map((stat, index) => (
-                      <div key={index} className="text-center p-3 bg-white/10 rounded-xl">
-                        <p className="text-2xl font-bold">{stat.value}</p>
-                        <p className="text-sm text-primary-100">{stat.label}</p>
+                      <div key={index} className="text-center p-2 sm:p-3 bg-white/10 rounded-lg sm:rounded-xl">
+                        <p className="text-lg sm:text-2xl font-bold">{stat.value}</p>
+                        <p className="text-xs sm:text-sm text-primary-100">{stat.label}</p>
                       </div>
                     ))}
                   </div>
@@ -666,17 +666,17 @@ const ServiceDetail = () => {
                   initial={{ opacity: 0, x: 30 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="bg-gray-50 rounded-2xl p-6"
+                  className="bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-6"
                 >
-                  <h3 className="text-lg font-display font-semibold text-gray-900 mb-3">
+                  <h3 className="text-base sm:text-lg font-display font-semibold text-gray-900 mb-2 sm:mb-3">
                     Have Questions?
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
                     Our investment advisors are here to help you make the right choice.
                   </p>
                   <Link
                     to="/contact"
-                    className="btn-secondary w-full text-center"
+                    className="btn-secondary w-full text-center text-sm sm:text-base py-2.5 sm:py-3"
                   >
                     Contact Us
                   </Link>

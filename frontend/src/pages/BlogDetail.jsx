@@ -118,7 +118,7 @@ const BlogDetail = () => {
         const youtubeMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
         if (youtubeMatch) {
             return (
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-lg mb-8">
+                <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-lg mb-6 sm:mb-8">
                     <iframe
                         src={`https://www.youtube.com/embed/${youtubeMatch[1]}`}
                         title="YouTube video"
@@ -134,7 +134,7 @@ const BlogDetail = () => {
         const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
         if (vimeoMatch) {
             return (
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-lg mb-8">
+                <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-lg mb-6 sm:mb-8">
                     <iframe
                         src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
                         title="Vimeo video"
@@ -152,19 +152,19 @@ const BlogDetail = () => {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-600 transition-colors mb-8"
+                className="inline-flex items-center gap-2 bg-red-500 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-red-600 transition-colors mb-6 sm:mb-8 text-sm sm:text-base"
             >
-                <PlayCircleIcon /> Watch Video
+                <PlayCircleIcon sx={{ fontSize: { xs: 18, sm: 24 } }} /> Watch Video
             </a>
         );
     };
 
     if (loading) {
         return (
-            <div className="bg-white min-h-screen flex items-center justify-center">
+            <div className="bg-white min-h-screen flex items-center justify-center px-4">
                 <div className="text-center">
-                    <div className="text-6xl mb-4">⏳</div>
-                    <h2 className="text-2xl font-display font-semibold text-gray-900 mb-2">Loading...</h2>
+                    <div className="text-4xl sm:text-6xl mb-4">⏳</div>
+                    <h2 className="text-xl sm:text-2xl font-display font-semibold text-gray-900 mb-2">Loading...</h2>
                 </div>
             </div>
         );
@@ -172,16 +172,16 @@ const BlogDetail = () => {
 
     if (error || !blog) {
         return (
-            <div className="bg-white min-h-screen flex items-center justify-center">
+            <div className="bg-white min-h-screen flex items-center justify-center px-4">
                 <div className="text-center">
-                    <div className="text-6xl mb-4">🚫</div>
-                    <h2 className="text-2xl font-display font-semibold text-gray-900 mb-2">Blog Not Found</h2>
-                    <p className="text-gray-600 mb-6">The article you're looking for doesn't exist.</p>
+                    <div className="text-4xl sm:text-6xl mb-4">🚫</div>
+                    <h2 className="text-xl sm:text-2xl font-display font-semibold text-gray-900 mb-2">Blog Not Found</h2>
+                    <p className="text-gray-600 mb-6 text-sm sm:text-base">The article you're looking for doesn't exist.</p>
                     <Link
                         to="/blog"
-                        className="inline-flex items-center gap-2 bg-primary-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-primary-600 transition-colors"
+                        className="inline-flex items-center gap-2 bg-primary-500 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold hover:bg-primary-600 transition-colors text-sm sm:text-base"
                     >
-                        <ArrowBackIcon fontSize="small" />
+                        <ArrowBackIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
                         Back to Blog
                     </Link>
                 </div>
@@ -194,7 +194,7 @@ const BlogDetail = () => {
     return (
         <div className="bg-white">
             {/* Hero Section */}
-            <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
+            <section className="relative h-[40vh] sm:h-[45vh] md:h-[50vh] min-h-[300px] sm:min-h-[350px] md:min-h-[400px] overflow-hidden">
                 <img
                     src={blog.featured_image || DEFAULT_IMAGE}
                     alt={blog.title}
@@ -203,37 +203,37 @@ const BlogDetail = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
-                <div className="absolute inset-0 flex items-end">
-                    <div className="container-custom pb-12">
+                <div className="absolute inset-0 flex items-end px-4">
+                    <div className="container-custom pb-6 sm:pb-8 md:pb-12">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
                         >
                             {blog.category && (
-                                <span className="inline-block bg-primary-500 text-white px-4 py-1 rounded-full text-sm font-medium mb-4">
+                                <span className="inline-block bg-primary-500 text-white px-3 sm:px-4 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4">
                                     {blog.category}
                                 </span>
                             )}
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-4">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-3 sm:mb-4">
                                 {blog.title}
                             </h1>
-                            <div className="flex flex-wrap items-center gap-4 text-white/80">
-                                <span className="flex items-center gap-2">
-                                    <PersonIcon fontSize="small" />
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-white/80 text-xs sm:text-sm md:text-base">
+                                <span className="flex items-center gap-1 sm:gap-2">
+                                    <PersonIcon sx={{ fontSize: { xs: 14, sm: 20 } }} />
                                     {blog.author || 'Admin'}
                                 </span>
-                                <span className="flex items-center gap-2">
-                                    <CalendarTodayIcon fontSize="small" />
+                                <span className="flex items-center gap-1 sm:gap-2">
+                                    <CalendarTodayIcon sx={{ fontSize: { xs: 14, sm: 20 } }} />
                                     {formatDate(blog.created_at)}
                                 </span>
-                                <span className="flex items-center gap-2">
-                                    <VisibilityIcon fontSize="small" />
+                                <span className="flex items-center gap-1 sm:gap-2">
+                                    <VisibilityIcon sx={{ fontSize: { xs: 14, sm: 20 } }} />
                                     {blog.view_count || 0} views
                                 </span>
                                 {(blog.video_url || blog.video_file) && (
-                                    <span className="flex items-center gap-1 bg-red-500 px-3 py-1 rounded-full text-white text-sm">
-                                        <PlayCircleIcon fontSize="small" />
+                                    <span className="flex items-center gap-1 bg-red-500 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-white text-xs sm:text-sm">
+                                        <PlayCircleIcon sx={{ fontSize: { xs: 12, sm: 20 } }} />
                                         Video
                                     </span>
                                 )}
@@ -244,16 +244,16 @@ const BlogDetail = () => {
             </section>
 
             {/* Content Section */}
-            <section className="section-padding">
+            <section className="py-8 sm:py-12 md:py-16 lg:py-24 px-4">
                 <div className="container-custom">
-                    <div className="grid lg:grid-cols-3 gap-12">
+                    <div className="grid lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12">
                         {/* Main Content */}
                         <div className="lg:col-span-2">
                             {/* Video Section */}
                             {blog.video_url && (
-                                <div className="mb-8">
-                                    <h2 className="text-xl font-display font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <PlayCircleIcon className="text-red-500" />
+                                <div className="mb-6 sm:mb-8">
+                                    <h2 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                                        <PlayCircleIcon className="text-red-500" sx={{ fontSize: { xs: 20, sm: 24 } }} />
                                         Watch Video
                                     </h2>
                                     {renderVideoEmbed(blog.video_url)}
@@ -261,12 +261,12 @@ const BlogDetail = () => {
                             )}
 
                             {blog.video_file && !blog.video_url && (
-                                <div className="mb-8">
-                                    <h2 className="text-xl font-display font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <PlayCircleIcon className="text-red-500" />
+                                <div className="mb-6 sm:mb-8">
+                                    <h2 className="text-lg sm:text-xl font-display font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                                        <PlayCircleIcon className="text-red-500" sx={{ fontSize: { xs: 20, sm: 24 } }} />
                                         Watch Video
                                     </h2>
-                                    <div className="aspect-video rounded-2xl overflow-hidden shadow-lg bg-black">
+                                    <div className="aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-lg bg-black">
                                         <video
                                             src={blog.video_file}
                                             controls
@@ -284,19 +284,19 @@ const BlogDetail = () => {
                                 transition={{ duration: 0.5 }}
                             >
                                 <div
-                                    className="prose prose-lg max-w-none text-gray-700"
+                                    className="prose prose-sm sm:prose-lg max-w-none text-gray-700"
                                     dangerouslySetInnerHTML={{ __html: blog.content || '<p>Content coming soon...</p>' }}
                                 />
 
                                 {/* Tags */}
                                 {tags.length > 0 && (
-                                    <div className="mt-12 pt-8 border-t">
+                                    <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <LocalOfferIcon className="text-gray-400" />
+                                            <LocalOfferIcon className="text-gray-400" sx={{ fontSize: { xs: 18, sm: 24 } }} />
                                             {tags.map((tag, index) => (
                                                 <span
                                                     key={index}
-                                                    className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm"
+                                                    className="bg-gray-100 text-gray-600 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm"
                                                 >
                                                     {tag}
                                                 </span>
@@ -306,12 +306,12 @@ const BlogDetail = () => {
                                 )}
 
                                 {/* Share Button */}
-                                <div className="mt-8">
+                                <div className="mt-6 sm:mt-8">
                                     <button
                                         onClick={handleShare}
-                                        className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-gray-200 transition-colors"
+                                        className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-medium hover:bg-gray-200 transition-colors text-sm sm:text-base"
                                     >
-                                        <ShareIcon fontSize="small" />
+                                        <ShareIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
                                         Share Article
                                     </button>
                                 </div>
@@ -320,38 +320,38 @@ const BlogDetail = () => {
 
                         {/* Sidebar */}
                         <div className="lg:col-span-1">
-                            <div className="sticky top-28 space-y-8">
+                            <div className="lg:sticky lg:top-24 space-y-4 sm:space-y-6 md:space-y-8">
                                 {/* Back to Blog */}
                                 <Link
                                     to="/blog"
-                                    className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium"
+                                    className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm sm:text-base"
                                 >
-                                    <ArrowBackIcon fontSize="small" />
+                                    <ArrowBackIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />
                                     Back to Blog
                                 </Link>
 
                                 {/* Related Posts */}
                                 {relatedBlogs.length > 0 && (
-                                    <div className="bg-gray-50 rounded-2xl p-6">
-                                        <h3 className="text-lg font-display font-bold text-gray-900 mb-4">
+                                    <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                                        <h3 className="text-base sm:text-lg font-display font-bold text-gray-900 mb-3 sm:mb-4">
                                             Related Articles
                                         </h3>
-                                        <div className="space-y-4">
+                                        <div className="space-y-3 sm:space-y-4">
                                             {relatedBlogs.map((related) => (
                                                 <Link
                                                     key={related.id}
                                                     to={`/blog/${related.slug}`}
                                                     className="block group"
                                                 >
-                                                    <div className="flex gap-3">
+                                                    <div className="flex gap-2 sm:gap-3">
                                                         <img
                                                             src={related.featured_image || DEFAULT_IMAGE}
                                                             alt={related.title}
-                                                            className="w-20 h-16 object-cover rounded-lg flex-shrink-0"
+                                                            className="w-16 h-12 sm:w-20 sm:h-16 object-cover rounded-lg flex-shrink-0"
                                                             onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                                                         />
                                                         <div>
-                                                            <h4 className="text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2">
+                                                            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2">
                                                                 {related.title}
                                                             </h4>
                                                             <span className="text-xs text-gray-500">
@@ -366,16 +366,16 @@ const BlogDetail = () => {
                                 )}
 
                                 {/* CTA Card */}
-                                <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl p-6 text-white">
-                                    <h3 className="text-lg font-display font-bold mb-2">
+                                <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white">
+                                    <h3 className="text-base sm:text-lg font-display font-bold mb-2">
                                         Start Investing Today
                                     </h3>
-                                    <p className="text-primary-100 text-sm mb-4">
+                                    <p className="text-primary-100 text-xs sm:text-sm mb-3 sm:mb-4">
                                         Explore our agricultural investment opportunities and grow your wealth sustainably.
                                     </p>
                                     <Link
                                         to="/services"
-                                        className="inline-block bg-white text-primary-600 px-6 py-2 rounded-full font-semibold text-sm hover:bg-primary-50 transition-colors"
+                                        className="inline-block bg-white text-primary-600 px-5 sm:px-6 py-2 rounded-full font-semibold text-xs sm:text-sm hover:bg-primary-50 transition-colors"
                                     >
                                         View Services
                                     </Link>

@@ -125,7 +125,7 @@ const About = () => {
   return (
     <div className="bg-white">
       {/* Hero Section - Full Width Image */}
-      <section className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[650px] pb-16 sm:pb-20 md:pb-24" ref={heroRef}>
+      <section className="relative min-h-[560px] sm:min-h-[580px] md:min-h-[650px] pb-32 sm:pb-32 md:pb-24" ref={heroRef}>
         <img
           src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=80"
           alt="Agricultural Fields"
@@ -137,7 +137,7 @@ const About = () => {
         <div className="hidden md:block absolute top-20 left-10 w-32 h-32 bg-primary-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="hidden md:block absolute bottom-40 right-20 w-40 h-40 bg-green-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
 
-        <div className="relative flex items-center justify-center min-h-[350px] sm:min-h-[400px] md:min-h-[450px]">
+        <div className="relative flex items-center justify-center min-h-[380px] sm:min-h-[420px] md:min-h-[450px]">
           <div className="container-custom text-center px-4">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -209,7 +209,7 @@ const About = () => {
       </section>
 
       {/* Spacer for floating cards */}
-      <div className="h-16 sm:h-20 md:h-24 bg-white"></div>
+      <div className="h-36 sm:h-40 md:h-32 bg-white"></div>
 
       {/* Story Section */}
       <section className="py-12 sm:py-16 md:py-24 px-4" ref={storyRef}>

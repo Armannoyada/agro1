@@ -19,10 +19,14 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
+      // Close mobile menu on scroll
+      if (isOpen) {
+        setIsOpen(false);
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     setIsOpen(false);
@@ -107,12 +111,12 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation - Bigger & Bolder */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`relative px-5 py-3 rounded-full font-semibold text-base transition-all duration-300 ${isActive(link.path)
+                  className={`relative px-3 xl:px-5 py-2 xl:py-3 rounded-full font-semibold text-sm xl:text-base transition-all duration-300 ${isActive(link.path)
                     ? 'text-primary-600 bg-primary-50'
                     : 'text-gray-700 hover:text-primary-600 hover:bg-primary-50'
                     }`}
@@ -129,10 +133,10 @@ const Navbar = () => {
             </div>
 
             {/* CTA Button - Bigger & More Prominent */}
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <Link
                 to="/join"
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-4 rounded-full font-bold text-base hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white px-5 xl:px-8 py-3 xl:py-4 rounded-full font-bold text-sm xl:text-base hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 <span>Join Now</span>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +147,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-3 rounded-xl hover:bg-gray-100 transition"
+              className="lg:hidden p-3 rounded-xl hover:bg-gray-100 transition"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <CloseIcon sx={{ fontSize: 28 }} /> : <MenuIcon sx={{ fontSize: 28 }} />}
@@ -158,7 +162,7 @@ const Navbar = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t shadow-lg"
+              className="lg:hidden bg-white border-t shadow-lg"
             >
               <div className="container-custom py-6 space-y-2">
                 {navLinks.map((link) => (
